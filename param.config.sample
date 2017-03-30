@@ -1,0 +1,8 @@
+# Fichier de configuration du connecteur
+
+# Correspond � l'URL du serveur du SAE
+UrlAsalae = http://sae.domaine.fr
+
+# Nom et mot de passe de l'utilisateur habilité à appeler les web services
+username = web-service
+password = mot-de-passe

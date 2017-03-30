@@ -1,0 +1,141 @@
+			Utilisation du connecteur As@laé
+
+									Conseil départemental du Morbihan
+									Direction des systèmes d'information
+									Service Études
+									Rédacteur : Patrick Percot
+
+---------------------------------------------
+1) Rôle du connecteur
+2) Installation du connecteur
+3) Paramétrage du connecteur
+4) Lancement du connecteur
+5) Fonction "tester-serveur" du connecteur
+6) Fonction "connecter-serveur" du connecteur
+7) Fonction "transferer-archive" du connecteur
+---------------------------------------------
+
+
+
+---------------------------------------------
+----------------- 1) Rôle du connecteur
+
+Le connecteur sert à transférer des archives dans le SAE.
+Les archives sont constituées de deux fichiers. 
+Le premier est le bordereau de transfert au format SEDA 0.2 ou
+1.0 et le second est le fichier ZIP contenant les documents à archiver.
+ 
+Bien évidemment, un accord de versement doit être paramétré sur le SAE 
+et le bordereau doit être conforme au profil d'archivage lié à cet 
+accord de versement.
+
+Le transfert des archives se fait à l'aide la commande transferer-archive
+
+Deux commandes permettent de tester la connexion.
+
+---------------------------------------------
+----------------- 2) Installation du connecteur
+
+
+Sur l'interface Web de Git, récupérer le ZIP du projet cd56-connecteur-asalae-executables
+
+Se placer dans le répertoire à partir duquel on souahite exécuter le connecteur.
+Dézipper le fichier ZIP.
+S'assurer que l'arborescence et les noms de répertoires conviennent à vos pratiques.
+
+Le logiciel est prêt à être utilisé.
+
+---------------------------------------------
+----------------- 3) Paramétrage du connecteur
+
+Le paramétrage du connecteur est fait dans le fichier param.config.
+On peut créer le ficheir param.config en copiant le fichier param.config.sample
+
+Ce fichier est documenté pour chacun des paramètres, vous y trouverez des informations
+plus complètes que dans cette documentation. 
+
+Il contient les informations suivantes :
+	- UrlAsalae : l'URL du serveur qui héberge les web services
+	- username : nom de l'utilisateur habilité à appeler les web services
+	- password : mot de passe de l'utilisateur habilité à appeler les web services
+	
+Un utilisateur de Web Services doit avoir été déclaré dans les utilisateurs
+du SAE. Attention : le mot de passe de l'utiilsateur de Web Services n'est
+pas celui que vous avez défini, mais un mot de passe généré par le SAE que
+vous trouverez dans la vue détaillée de l'utilisateur (Mdp webservices RESTful).
+
+---------------------------------------------
+----------------- 4) Lancement du connecteur
+
+Un lanceur de type fichier batch (connecteur-asalae.bat) est fourni dans la 
+version exécutable de cet outil.
+
+Ce programme doit être lancé en ligne de commande.
+Ceci permet de pouvoir l'utiliser efficacement avec un outil d'urbanisation du système
+d'information.
+
+Pour ouvrir une console sous Windows :
+	- à partir de l'explorateur de fichiers, se positionner sur le répertoire où le 
+	  connecteur est installé.
+	- appuyer sur la touche shift et cliquer simultanément sur le bouton droit de la
+	  souris.
+	- sélectionner le menu "Ouvrir une fenêtre de commandes ici"
+
+Pour lancer le programme du connecteur :
+	- taper "co" puis la touche TAB, le nom du programme connecteur-asalae.bat
+	  s'affiche dans la ligne de commande
+
+Sans autre paramètre, le programme affiche les options avec lesquelles on peut l'utiliser. 
+
+Avec l'option -verbose (ou -v), le programme affiche les étapes qui sont déroulées.
+Avec l'option -veryverbose (ou -vv), les trames JSON sont affichées.
+
+Les messages affichés commencent par "OK:" si tout s'est bien passé
+et ils commencent par "ERROR:" si une erreur s'est produite.
+
+Pour aller plus loin, voir les sections suivantes.
+
+
+---------------------------------------------
+----------------- 5) Fonction "tester-serveur" du connecteur
+
+Le connecteur permet de tster la présence du serveur paramétré dans le fichier
+param.config
+
+Exécution :
+c:\repInstall> connecteur-asalae.bat tester-serveur
+
+c:\repInstall> connecteur-asalae.bat --verbose tester-serveur
+
+
+---------------------------------------------
+----------------- 6) Fonction "connecter-serveur" du connecteur
+
+Le connecteur permet de tster la validaité des paramètres de connexion au
+serveur paramétrés dans le fichier param.config
+
+Cette commande affiche la version du serveur.
+
+Exécution :
+c:\repInstall> connecteur-asalae.bat connecter-serveur
+
+Un mode bavard peut être demandé :
+c:\repInstall> connecteur-asalae.bat -verbose connecter-serveur
+
+
+---------------------------------------------
+----------------- 6) Fonction "transferer-archive" du connecteur
+
+Le connecteur permet de transférer dans le SAE une nouvelle archive.
+
+Cette commande affiche la date et l'ehure de prise en compte du transfert.
+
+Exécution :
+c:\repInstall> connecteur-asalae.bat transferer-archive \
+   "nom-fichier.xml"  "nom-fichier.zip"
+
+Un mode bavard peut être demandé :
+c:\repInstall> connecteur-asalae.bat -verbose transferer-archive \
+   "nom-fichier.xml"  "nom-fichier.zip"
+
+
