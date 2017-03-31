@@ -109,6 +109,16 @@ public class AsalaeConnector {
         return callGetMethod("/restservices/versions");
     }
 
+    public AsalaeReturn getACK(String transferIdentifier) {
+        return callGetMethod("/restservices/sedaMessages", "application/xml"
+        		, "ArchiveTransfer", "Acknowledgement", transferIdentifier);
+    }
+
+    public AsalaeReturn getATR(String transferIdentifier) {
+        return callGetMethod("/restservices/sedaMessages", "application/xml"
+        		, "ArchiveTransfer", "ArchiveTransferReply", transferIdentifier);
+    }
+
     
 	/**
 	 * Appel un web service à l'aide de la méthode GET
@@ -117,6 +127,18 @@ public class AsalaeConnector {
 	 * @return Réponse du web service au format JSON 
 	 */
 	protected AsalaeReturn callGetMethod(String webService) {
+		return callGetMethod(webService, "application/json", null, null, null);
+	}
+	
+	/**
+	 * Appel un web service à l'aide de la méthode GET
+	 * 
+	 * @param webService Nom du web service complété des paramètres éventuels
+	 * @return Réponse du web service au format JSON si responseFormat = "application/json"
+	 * @return Réponse du web service au format XML si responseFormat = "application/xml"
+	 */
+	protected AsalaeReturn callGetMethod(String webService, String responseFormat
+			, String sequence, String message, String parametreRequete) {
 		AsalaeReturn asalaeRet = new AsalaeReturn();
 		
 		String url = param.getUrlAsalae() + webService;
@@ -138,8 +160,16 @@ public class AsalaeConnector {
 		String encoding = Base64.encodeBase64URLSafeString(auth.getBytes());
 		httpGet.setHeader("Authorization", "Basic " + encoding);
 
-		httpGet.addHeader("Accept", "application/json");
+		httpGet.addHeader("Accept", responseFormat);
 		
+		if ( ! (sequence.isEmpty() && message.isEmpty())) {
+			MultipartEntityBuilder builder = MultipartEntityBuilder.create();
+			builder.addTextBody("sequence", sequence);
+			builder.addTextBody("message", message);
+			builder.addTextBody("originOrganizationIdentification", param.getOrganizationIdentification());
+			builder.addTextBody("originMessageIdentifier", parametreRequete);
+		}
+
 		CloseableHttpResponse response;
 		String resp = "";
 		try {

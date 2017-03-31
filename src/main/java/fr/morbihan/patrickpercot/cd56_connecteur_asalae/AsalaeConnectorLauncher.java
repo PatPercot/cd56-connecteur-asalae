@@ -23,6 +23,9 @@ public class AsalaeConnectorLauncher {
 	protected String commandeTester = "tester-serveur";
 	protected String commandeConnexion = "connecter-serveur";
 	protected String commandeTransfert = "transferer-archive";
+	protected String commandeGetACK = "get-ack";
+	protected String commandeGetATR = "get-atr";
+	
 
 
 	public static void main(String[] args) {
@@ -71,6 +74,8 @@ public class AsalaeConnectorLauncher {
 			if (	(args.length == 1 && commandeTester.equals(args[0].toLowerCase()))
 				 || (args.length == 1 && commandeConnexion.equals(args[0].toLowerCase()))
 				 || (args.length == 3 && commandeTransfert.equals(args[0].toLowerCase()))
+				 || (args.length == 2 && commandeGetACK.equals(args[0].toLowerCase()))
+				 || (args.length == 2 && commandeGetATR.equals(args[0].toLowerCase()))
 				 )  {
 				bHasRun = true;
 
@@ -82,6 +87,12 @@ public class AsalaeConnectorLauncher {
 
 				if (commandeTransfert.equals(args[0].toLowerCase())) 
 					transfert(args[1], args[2]);
+
+				if (commandeGetACK.equals(args[0].toLowerCase())) 
+					getack(args[1]);
+
+				if (commandeGetATR.equals(args[0].toLowerCase())) 
+					getatr(args[1]);
 			}
         }
 				
@@ -122,39 +133,39 @@ public class AsalaeConnectorLauncher {
 	  }
 
 	  public void connexion() {
-	        	AsalaeConnector http = new AsalaeConnector(param);
+      	AsalaeConnector http = new AsalaeConnector(param);
 
-	        	if (bVerbose) {
-	        		System.out.println("Test de connexion à As@lae '" + param.getUrlAsalae() + "'");
-	        	}
-	    		try {
-	    			AsalaeReturn response = http.TestVersionAsalae();
-	    			
-	    			if (bVeryVerbose) {
-		    			System.out.println("Message = " + response.getMessage());
-		    			System.out.println("Code = " + response.getStatusCode());
-	    			}
-	    			if (response.statusCode == 200) {
-		    			Object document = Configuration.defaultConfiguration().jsonProvider().parse(response.message);
-		    			String version = null;
-		    			version = JsonPath.read(document, "$.version");
-						if (bVerbose)
-							System.out.println("La version d'As@laé est la version '" + version + "'");
-						else
-							System.out.println("OK: '" + version + "'");
-	    			} else {
-    					if (bVerbose)
-    						System.out.println("Erreur lors de la demande de version : '" + response.message + "'");
-    					else
-    						System.out.println("ERROR: (connecter-serveur) '" + response.message + "'");
-	    			}
+      	if (bVerbose) {
+      		System.out.println("Test de connexion à As@lae '" + param.getUrlAsalae() + "'");
+      	}
+  		try {
+  			AsalaeReturn response = http.TestVersionAsalae();
+  			
+  			if (bVeryVerbose) {
+	    			System.out.println("Message = " + response.getMessage());
+	    			System.out.println("Code = " + response.getStatusCode());
+  			}
+  			if (response.statusCode == 200) {
+	    			Object document = Configuration.defaultConfiguration().jsonProvider().parse(response.message);
+	    			String version = null;
+	    			version = JsonPath.read(document, "$.version");
+					if (bVerbose)
+						System.out.println("La version d'As@laé est la version '" + version + "'");
+					else
+						System.out.println("OK: '" + version + "'");
+  			} else {
+					if (bVerbose)
+						System.out.println("Erreur lors de la demande de version : '" + response.message + "'");
+					else
+						System.out.println("ERROR: (connecter-serveur) '" + response.message + "'");
+  			}
 
-	    		}
-    			catch (Exception e) {
-    				System.err.println("ERROR: (connecter-serveur) une exception de type " + e.getClass() + " s'est produite " + e.getMessage());
-    			}
-		        
-		  }
+  		}
+			catch (Exception e) {
+				System.err.println("ERROR: (connecter-serveur) une exception de type " + e.getClass() + " s'est produite " + e.getMessage());
+			}
+	        
+	  }
 
 		  public void transfert(String bordereau, String zip) {
 	        	AsalaeConnector http = new AsalaeConnector(param);
@@ -190,6 +201,77 @@ public class AsalaeConnectorLauncher {
     			}
 		  }
 
+		  /*
+		   * @param transferIdentifier identifiant du transfert, exemple DEP56_PESV2_WSJAVA_0000000002
+		   */
+		  public void getack(String transferIdentifier) {
+	        	AsalaeConnector http = new AsalaeConnector(param);
+
+	        	if (bVerbose) {
+	        		System.out.println("Récupération d'un ACK As@lae '" + param.getUrlAsalae() + "' pour '" + transferIdentifier + "'");
+	        	}
+	    		try {
+	    			AsalaeReturn response = http.getACK(transferIdentifier);
+	    			
+	    			if (bVeryVerbose) {
+		    			System.out.println("Message = " + response.getMessage());
+		    			System.out.println("Code = " + response.getStatusCode());
+	    			}
+	    			if (response.statusCode == 200) {
+		    			String accuseReception = null;
+		    			// version = récupération accuseReception dans message SEDA XML 
+						if (bVerbose)
+							System.out.println("La version d'As@laé est la version '" + accuseReception + "'");
+						else
+							System.out.println("OK: '" + accuseReception + "'");
+	    			} else {
+  					if (bVerbose)
+  						System.out.println("Erreur lors de la demande de version : '" + response.message + "'");
+  					else
+  						System.out.println("ERROR: (connecter-serveur) '" + response.message + "'");
+	    			}
+
+	    		}
+  			catch (Exception e) {
+  				System.err.println("ERROR: (connecter-serveur) une exception de type " + e.getClass() + " s'est produite " + e.getMessage());
+  			}
+		        
+		  }
+
+		  public void getatr(String transferIdentifier) {
+	        	AsalaeConnector http = new AsalaeConnector(param);
+
+	        	if (bVerbose) {
+	        		System.out.println("Test de connexion à As@lae '" + param.getUrlAsalae() + "'");
+	        	}
+	    		try {
+	    			AsalaeReturn response = http.getATR();
+	    			
+	    			if (bVeryVerbose) {
+		    			System.out.println("Message = " + response.getMessage());
+		    			System.out.println("Code = " + response.getStatusCode());
+	    			}
+	    			if (response.statusCode == 200) {
+		    			String archiveTransferReply = null;
+		    			// version = récupération archiveTransferReply dans message SEDA XML 
+						if (bVerbose)
+							System.out.println("La version d'As@laé est la version '" + archiveTransferReply + "'");
+						else
+							System.out.println("OK: '" + archiveTransferReply + "'");
+	    			} else {
+  					if (bVerbose)
+  						System.out.println("Erreur lors de la demande de version : '" + response.message + "'");
+  					else
+  						System.out.println("ERROR: (connecter-serveur) '" + response.message + "'");
+	    			}
+
+	    		}
+  			catch (Exception e) {
+  				System.err.println("ERROR: (connecter-serveur) une exception de type " + e.getClass() + " s'est produite " + e.getMessage());
+  			}
+		        
+		  }
+
 		  protected void usage() {
 			System.out.println("Le connecteur As@laé du département du Morbihan peut être utilisé pour transmettre");
 			System.out.println("une archive à un SAE As@laé.");
@@ -215,6 +297,20 @@ public class AsalaeConnectorLauncher {
 			System.out.println("\t\t-fichier des archives (ZIP ou TGZ) : \"nom-fichier.zip\"");
 			System.out.println("");
 			System.out.println("\tLe programme indique si le transfert s'est déroulé correctement");
+			System.out.println("\n");
+						
+			System.out.println("Usage de la commande de récupération d'accusé de réception : 1 (un) paramètre est nécessaire");
+			System.out.println("\t\t-nom de la commande : get-ack");
+			System.out.println("\t\t-identifidant du transfert (bordereau SEDA) : \"ID_ALPHANUM_TRANSFERT\"");
+			System.out.println("");
+			System.out.println("\tLe programme retourne les informations renvoyées par le SAE");
+			System.out.println("\n");
+						
+			System.out.println("Usage de la commande de récupération de l'ATR (ArchiveTransferReply) : 1 (un) paramètre est nécessaire");
+			System.out.println("\t\t-nom de la commande : get-atr");
+			System.out.println("\t\t-identifidant du transfert (bordereau SEDA) : \"ID_ALPHANUM_TRANSFERT\"");
+			System.out.println("");
+			System.out.println("\tLe programme retourne les informations renvoyées par le SAE");
 			System.out.println("\n");
 						
 		}

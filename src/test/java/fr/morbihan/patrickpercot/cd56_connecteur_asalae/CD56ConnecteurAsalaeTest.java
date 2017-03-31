@@ -42,6 +42,9 @@ public class CD56ConnecteurAsalaeTest
 
         test.addTest(new CD56ConnecteurAsalaeTest("testPingAsalae"));
         test.addTest(new CD56ConnecteurAsalaeTest("testVersionAsalae"));
+
+        test.addTest(new CD56ConnecteurAsalaeTest("testGetAck"));
+        
 /*
         test.addTest(new CD56ConnecteurAsalaeTest("testPOSTAsalae"));
         test.addTest(new CD56ConnecteurAsalaeTest("testPOSTAsalaeErreur"));
@@ -168,6 +171,37 @@ public class CD56ConnecteurAsalaeTest
 		        }
 		        
 		  }
+
+		    /*
+		     * Test pour vérification du bon fonctionnement de la connexion 
+		     * 
+		     */
+			  public void testGetAck() {
+			        ConfigFile param = new ConfigFile();
+			        if (param.loadFile("param.config.test")) {
+			        	AsalaeConnector http = new AsalaeConnector(param);
+
+			    		System.out.println("Testing Appel testVersionAsalae");
+			    		try {
+			    			AsalaeReturn response = http.getACK("DEP56_PESV2_WSJAVA_0000000002");
+			    			//print result
+			    			System.out.println("Message = " + response.getMessage());
+			    			System.out.println("Code = " + response.getStatusCode());
+			    			assert(response.getMessage().startsWith("{\"application\":\"as@lae\",\"denomination\":\"\",\"version\":\"V1.6.2\"}"));
+			    			Assert.assertEquals("Code de retour de version", response.getStatusCode(), 200);
+
+			    		} catch (Exception e) {
+			    			// TODO Auto-generated catch block
+			    			e.printStackTrace();
+			    			assertFalse(false);
+			    		}
+
+			        } else {
+			        	System.out.println("Le fichier de configuration est introuvable ou incomplet");
+			        	assertFalse(false);
+			        }
+			        
+			  }
 
 		    /*
 		     * Test pour vérification du bon fonctionnement des HTTPPOST
