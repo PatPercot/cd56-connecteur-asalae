@@ -74,8 +74,8 @@ public class AsalaeConnectorLauncher {
 			if (	(args.length == 1 && commandeTester.equals(args[0].toLowerCase()))
 				 || (args.length == 1 && commandeConnexion.equals(args[0].toLowerCase()))
 				 || (args.length == 3 && commandeTransfert.equals(args[0].toLowerCase()))
-				 || (args.length == 2 && commandeGetACK.equals(args[0].toLowerCase()))
-				 || (args.length == 2 && commandeGetATR.equals(args[0].toLowerCase()))
+				 || (args.length == 3 && commandeGetACK.equals(args[0].toLowerCase()))
+				 || (args.length == 3 && commandeGetATR.equals(args[0].toLowerCase()))
 				 )  {
 				bHasRun = true;
 
@@ -89,10 +89,10 @@ public class AsalaeConnectorLauncher {
 					transfert(args[1], args[2]);
 
 				if (commandeGetACK.equals(args[0].toLowerCase())) 
-					getack(args[1]);
+					getack(args[1], args[2]);
 
 				if (commandeGetATR.equals(args[0].toLowerCase())) 
-					getatr(args[1]);
+					getatr(args[1], args[2]);
 			}
         }
 				
@@ -204,14 +204,15 @@ public class AsalaeConnectorLauncher {
 		  /*
 		   * @param transferIdentifier identifiant du transfert, exemple DEP56_PESV2_WSJAVA_0000000002
 		   */
-		  public void getack(String transferIdentifier) {
+		  public void getack(String transferIdentifier, String transferringAgency) {
 	        	AsalaeConnector http = new AsalaeConnector(param);
 
 	        	if (bVerbose) {
-	        		System.out.println("Récupération d'un ACK As@lae '" + param.getUrlAsalae() + "' pour '" + transferIdentifier + "'");
+	        		System.out.println("Récupération d'un ACK As@lae '" + param.getUrlAsalae() + "' pour '" 
+	        				+ transferIdentifier + "' transféré par '" + transferringAgency + "'");
 	        	}
 	    		try {
-	    			AsalaeReturn response = http.getACK(transferIdentifier);
+	    			AsalaeReturn response = http.getACK(transferIdentifier, transferringAgency);
 	    			
 	    			if (bVeryVerbose) {
 		    			System.out.println("Message = " + response.getMessage());
@@ -228,7 +229,7 @@ public class AsalaeConnectorLauncher {
   					if (bVerbose)
   						System.out.println("Erreur lors de la demande de version : '" + response.message + "'");
   					else
-  						System.out.println("ERROR: (connecter-serveur) '" + response.message + "'");
+  						System.out.println("ERROR: (get-ack) '" + response.message + "'");
 	    			}
 
 	    		}
@@ -238,14 +239,15 @@ public class AsalaeConnectorLauncher {
 		        
 		  }
 
-		  public void getatr(String transferIdentifier) {
+		  public void getatr(String transferIdentifier, String transferringAgency) {
 	        	AsalaeConnector http = new AsalaeConnector(param);
 
 	        	if (bVerbose) {
-	        		System.out.println("Test de connexion à As@lae '" + param.getUrlAsalae() + "'");
+	        		System.out.println("Récupération d'un ATR As@lae '" + param.getUrlAsalae() + "' pour '" 
+	        				+ transferIdentifier + "' transféré par '" + transferringAgency + "'");
 	        	}
 	    		try {
-	    			AsalaeReturn response = http.getATR();
+	    			AsalaeReturn response = http.getATR(transferIdentifier, transferringAgency);
 	    			
 	    			if (bVeryVerbose) {
 		    			System.out.println("Message = " + response.getMessage());
@@ -262,7 +264,7 @@ public class AsalaeConnectorLauncher {
   					if (bVerbose)
   						System.out.println("Erreur lors de la demande de version : '" + response.message + "'");
   					else
-  						System.out.println("ERROR: (connecter-serveur) '" + response.message + "'");
+  						System.out.println("ERROR: (get-atr) '" + response.message + "'");
 	    			}
 
 	    		}

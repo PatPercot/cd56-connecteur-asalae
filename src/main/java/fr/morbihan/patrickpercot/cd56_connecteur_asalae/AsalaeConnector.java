@@ -2,6 +2,9 @@ package fr.morbihan.patrickpercot.cd56_connecteur_asalae;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.util.HashMap;
 
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
@@ -109,14 +112,24 @@ public class AsalaeConnector {
         return callGetMethod("/restservices/versions");
     }
 
-    public AsalaeReturn getACK(String transferIdentifier) {
-        return callGetMethod("/restservices/sedaMessages", "application/xml"
-        		, "ArchiveTransfer", "Acknowledgement", transferIdentifier);
+    public AsalaeReturn getACK(String transferIdentifier, String tranferringAgency) {
+    	HashMap<String, String> namedParameters = new  HashMap<String, String>();
+    	namedParameters.putIfAbsent("sequence", "ArchiveTransfer");
+    	namedParameters.putIfAbsent("message", "Acknowledgement");
+    	namedParameters.putIfAbsent("originMessageIdentifier", transferIdentifier);
+    	namedParameters.putIfAbsent("originOrganizationIdentification", tranferringAgency);
+    	
+        return callGetMethod("/restservices/sedaMessages", "application/xml", namedParameters);
     }
 
-    public AsalaeReturn getATR(String transferIdentifier) {
-        return callGetMethod("/restservices/sedaMessages", "application/xml"
-        		, "ArchiveTransfer", "ArchiveTransferReply", transferIdentifier);
+    public AsalaeReturn getATR(String transferIdentifier, String tranferringAgency) {
+    	HashMap<String, String> namedParameters = new  HashMap<String, String>();
+    	namedParameters.putIfAbsent("sequence", "ArchiveTransfer");
+    	namedParameters.putIfAbsent("message", "ArchiveTransferReply");
+    	namedParameters.putIfAbsent("originMessageIdentifier", transferIdentifier);
+    	namedParameters.putIfAbsent("originOrganizationIdentification", tranferringAgency);
+
+    	return callGetMethod("/restservices/sedaMessages", "application/xml", namedParameters);
     }
 
     
@@ -127,7 +140,7 @@ public class AsalaeConnector {
 	 * @return Réponse du web service au format JSON 
 	 */
 	protected AsalaeReturn callGetMethod(String webService) {
-		return callGetMethod(webService, "application/json", null, null, null);
+		return callGetMethod(webService, "application/json", null);
 	}
 	
 	/**
@@ -138,7 +151,7 @@ public class AsalaeConnector {
 	 * @return Réponse du web service au format XML si responseFormat = "application/xml"
 	 */
 	protected AsalaeReturn callGetMethod(String webService, String responseFormat
-			, String sequence, String message, String parametreRequete) {
+			, HashMap<String, String> namedParameters) {
 		AsalaeReturn asalaeRet = new AsalaeReturn();
 		
 		String url = param.getUrlAsalae() + webService;
@@ -155,6 +168,24 @@ public class AsalaeConnector {
 		CloseableHttpClient httpClient =  HttpClients.custom()
                 .setDefaultCredentialsProvider(null)
                 .build();
+		if ( namedParameters != null) {
+			StringBuilder stUrl = new StringBuilder(url);
+			boolean first = true;
+			for ( String key : namedParameters.keySet())  {
+				if (first) 
+					stUrl.append("?");
+				else
+					stUrl.append("&");
+				try {
+					stUrl.append(key).append("=").append(URLEncoder.encode(namedParameters.get(key), "UTF-8"));
+				} catch (UnsupportedEncodingException e) {
+					e.printStackTrace();
+				}
+				first = false;
+			}
+			url = stUrl.toString();
+		}
+
 		HttpGet httpGet = new HttpGet(url);
 		String auth = param.getUsername() + ":" + param.getPassword();
 		String encoding = Base64.encodeBase64URLSafeString(auth.getBytes());
@@ -162,14 +193,6 @@ public class AsalaeConnector {
 
 		httpGet.addHeader("Accept", responseFormat);
 		
-		if ( ! (sequence.isEmpty() && message.isEmpty())) {
-			MultipartEntityBuilder builder = MultipartEntityBuilder.create();
-			builder.addTextBody("sequence", sequence);
-			builder.addTextBody("message", message);
-			builder.addTextBody("originOrganizationIdentification", param.getOrganizationIdentification());
-			builder.addTextBody("originMessageIdentifier", parametreRequete);
-		}
-
 		CloseableHttpResponse response;
 		String resp = "";
 		try {
