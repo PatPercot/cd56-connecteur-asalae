@@ -2,9 +2,6 @@ package fr.morbihan.patrickpercot.cd56_connecteur_asalae;
 
 import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.JsonPath;
-import com.jayway.jsonpath.PathNotFoundException;
-
-import junit.framework.Assert;
 
 /**
  * @author Patrick Percot - Direction des systèmes d'information - Conseil départemental du Morbihan 
