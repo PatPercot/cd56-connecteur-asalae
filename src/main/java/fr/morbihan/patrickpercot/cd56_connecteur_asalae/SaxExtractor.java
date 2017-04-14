@@ -2,6 +2,8 @@ package fr.morbihan.patrickpercot.cd56_connecteur_asalae;
 
 import java.io.IOException;
 import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.Hashtable;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
@@ -20,31 +22,27 @@ import org.xml.sax.helpers.DefaultHandler;
  * 
  */
 public class SaxExtractor extends DefaultHandler {
-	protected String keyToExtract;
-	protected String valueOfKey;
+	Hashtable<String, String> extractedTags;
+	ArrayList<String> keysToExtract;
+	protected String currentKey;
 	
 	/**
 	 * @return the valueOfKey
 	 */
-	public String getExtractedValue() {
-		return valueOfKey;
+	public String getExtractedValue(String key) {
+		return extractedTags.get(key);
 	}
 
-	protected boolean keyFound;
-	protected String currentKey;
 	
 	public SaxExtractor() {
-		this.keyToExtract = "";
-		this.valueOfKey = "";
-		this.keyFound = false;
 		currentKey = "";
+		this.extractedTags = new Hashtable<String, String>();
+		this.keysToExtract = new ArrayList<String>();
 	}
 	
 	public void addKeyToExtract(String keyToExtract) {
-		this.keyToExtract = keyToExtract;
-		this.valueOfKey = "";
-		this.keyFound = false;
 		currentKey = "";
+		this.keysToExtract.add(keyToExtract);
 	}
 	
 	public void demarrerExtraction(String xmlMessage) {
@@ -80,9 +78,6 @@ public class SaxExtractor extends DefaultHandler {
 	public void startElement(String namespaceURI, String localName,
             String qName, Attributes atts) throws SAXException {
 		currentKey = localName;
-		if (localName.equals(keyToExtract)) {
-			keyFound = true;
-		}
 	}
 	
 	public void endElement(String nameSpace, String localName, 
@@ -91,8 +86,10 @@ public class SaxExtractor extends DefaultHandler {
 	}
 	
 	public void characters(char[] caracteres, int debut, int longueur) {
-		if (currentKey.equals(keyToExtract)) {
-			valueOfKey = new String(caracteres, debut, longueur);		}
+		if (keysToExtract.contains(currentKey)) {
+			String valueOfKey = new String(caracteres, debut, longueur);
+			extractedTags.put(currentKey, valueOfKey);
+		}
 	}		
 
 }

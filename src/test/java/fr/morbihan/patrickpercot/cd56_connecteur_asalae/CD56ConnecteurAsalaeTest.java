@@ -86,7 +86,7 @@ extends TestCase
 	 * 
 	 */
 	public void testConfigFile() {
-		System.out.println("Testing Chargement fichier de configuration");
+		System.out.println("\n\nTesting Chargement fichier de configuration");
 		if (initConfigFile()) {
 		} else {
 			assertFalse("Chargement du fichier dans un emplacement connu", false);
@@ -95,21 +95,21 @@ extends TestCase
 
 	public void testUrlServeur() {
 		if (initConfigFile()) {
-			System.out.println("Testing testUrlServeur");
+			System.out.println("\n\nTesting testUrlServeur");
 			assertEquals("http://sae.morbihan.fr", param.getUrlAsalae());
 		}
 	}
 
 	public void testUzerName() {
 		if (initConfigFile()) {
-			System.out.println("Testing testUzerName");
+			System.out.println("\n\nTesting testUzerName");
 			assertEquals("web-service", param.getUsername());
 		}
 	}
 
 	public void testPassword() {
 		if (initConfigFile()) {
-			System.out.println("Testing testPassword");
+			System.out.println("\n\nTesting testPassword");
 			String passwd = param.getPassword();
 			String message = "Le mot de passe ne doit pas être vide";
 			assertNotNull(message, passwd);
@@ -128,9 +128,9 @@ extends TestCase
 		ConfigFile param = new ConfigFile();
 		if (param.loadFile("param.config.test")) {
 			AsalaeConnector http = new AsalaeConnector(param);
-			http.setVeryVerbose(true);
+			http.setVeryVerbose(false);
 
-			System.out.println("Testing Appel TestPingAsalae");
+			System.out.println("\n\nTesting Appel TestPingAsalae");
 			try {
 				AsalaeReturn response = http.TestPingAsalae();
 				//print result
@@ -160,9 +160,9 @@ extends TestCase
 		ConfigFile param = new ConfigFile();
 		if (param.loadFile("param.config.test")) {
 			AsalaeConnector http = new AsalaeConnector(param);
-			http.setVeryVerbose(true);
+			http.setVeryVerbose(false);
 
-			System.out.println("Testing Appel testVersionAsalae");
+			System.out.println("\n\nTesting Appel testVersionAsalae");
 			try {
 				AsalaeReturn response = http.TestVersionAsalae();
 				//print result
@@ -192,9 +192,9 @@ extends TestCase
 		ConfigFile param = new ConfigFile();
 		if (param.loadFile("param.config.test")) {
 			AsalaeConnector http = new AsalaeConnector(param);
-			http.setVeryVerbose(true);
+			http.setVeryVerbose(false);
 
-			System.out.println("Testing Appel testGetAck");
+			System.out.println("\n\nTesting Appel testGetAck");
 			try {
 				// AsalaeReturn response = http.getACK("DEP56_PESV2_WSJAVA_0000000002", "225600014_122");
 				// AsalaeReturn response = http.getACK("MATRICES_CADASTRALES_60679b01e66ed25c03713c4a43056174fc6c25da1538c28514840f88d9fafbc3@2017-03-01T17:31:11.0000048Z", "FRCOL_840933");
@@ -228,9 +228,9 @@ extends TestCase
 		ConfigFile param = new ConfigFile();
 		if (param.loadFile("param.config.test")) {
 			AsalaeConnector http = new AsalaeConnector(param);
-			http.setVeryVerbose(true);
+			http.setVeryVerbose(false);
 
-			System.out.println("Testing Appel testGetATR");
+			System.out.println("\n\nTesting Appel testGetATR");
 			try {
 				// AsalaeReturn response = http.getATR("DEP56_PESV2_WSJAVA_0000000002", "225600014_122");
 				// AsalaeReturn response = http.getATR("MATRICES_CADASTRALES_60679b01e66ed25c03713c4a43056174fc6c25da1538c28514840f88d9fafbc3@2017-03-01T17:31:11.0000048Z", "FRCOL_840933");
@@ -263,9 +263,9 @@ extends TestCase
 		ConfigFile param = new ConfigFile();
 		if (param.loadFile("param.config.test")) {
 			AsalaeConnector http = new AsalaeConnector(param);
-			http.setVeryVerbose(true);
+			http.setVeryVerbose(false);
 
-			System.out.println("Testing Appel testGetAck NOT OK");
+			System.out.println("\n\nTesting Appel testGetAck NOT OK");
 			try {
 				// AsalaeReturn response = http.getACK("DEP56_PESV2_WSJAVA_0000000002", "225600014_122");
 				// AsalaeReturn response = http.getACK("MATRICES_CADASTRALES_60679b01e66ed25c03713c4a43056174fc6c25da1538c28514840f88d9fafbc3@2017-03-01T17:31:11.0000048Z", "FRCOL_840933");
@@ -299,9 +299,9 @@ extends TestCase
 		ConfigFile param = new ConfigFile();
 		if (param.loadFile("param.config.test")) {
 			AsalaeConnector http = new AsalaeConnector(param);
-			http.setVeryVerbose(true);
+			http.setVeryVerbose(false);
 
-			System.out.println("Testing Appel testGetATR NOT OK");
+			System.out.println("\n\nTesting Appel testGetATR NOT OK");
 			try {
 				// AsalaeReturn response = http.getATR("DEP56_PESV2_WSJAVA_0000000002", "225600014_122");
 				// AsalaeReturn response = http.getATR("MATRICES_CADASTRALES_60679b01e66ed25c03713c4a43056174fc6c25da1538c28514840f88d9fafbc3@2017-03-01T17:31:11.0000048Z", "FRCOL_840933");
@@ -336,7 +336,7 @@ extends TestCase
 			AsalaeConnector http = new AsalaeConnector(param);
 			http.setVeryVerbose(true);
 
-			System.out.println("Testing Appel testGetACK en attente");
+			System.out.println("\n\nTesting Appel testGetACK en attente");
 			try {
 				// AsalaeReturn response = http.getATR("DEP56_PESV2_WSJAVA_0000000002", "225600014_122");
 				// AsalaeReturn response = http.getATR("MATRICES_CADASTRALES_60679b01e66ed25c03713c4a43056174fc6c25da1538c28514840f88d9fafbc3@2017-03-01T17:31:11.0000048Z", "FRCOL_840933");
@@ -346,7 +346,7 @@ extends TestCase
 				System.out.println("Message = " + response.getMessage());
 				System.out.println("Code = " + response.getStatusCode());
 				assert(response.getStatusCode() == 200);
-				assert(response.getMessage().contains("Transfert en cours de traitement"));
+				assert(response.getMessage().contains("ATR_145"));
 
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
@@ -369,9 +369,9 @@ extends TestCase
 		ConfigFile param = new ConfigFile();
 		if (param.loadFile("param.config.test")) {
 			AsalaeConnector http = new AsalaeConnector(param);
-			http.setVeryVerbose(true);
+			http.setVeryVerbose(false);
 
-			System.out.println("Testing Appel testGetATR en attente");
+			System.out.println("\n\nTesting Appel testGetATR en attente");
 			try {
 				// AsalaeReturn response = http.getATR("DEP56_PESV2_WSJAVA_0000000002", "225600014_122");
 				// AsalaeReturn response = http.getATR("MATRICES_CADASTRALES_60679b01e66ed25c03713c4a43056174fc6c25da1538c28514840f88d9fafbc3@2017-03-01T17:31:11.0000048Z", "FRCOL_840933");
@@ -380,7 +380,7 @@ extends TestCase
 				//print result
 				System.out.println("Message = " + response.getMessage());
 				System.out.println("Code = " + response.getStatusCode());
-				assert(response.getStatusCode() == 200);
+				assert(response.getStatusCode() == 500);
 				assert(response.getMessage().contains("Transfert en cours de traitement"));
 
 			} catch (Exception e) {
@@ -408,9 +408,9 @@ extends TestCase
 		ConfigFile param = new ConfigFile();
 		if (param.loadFile("param.config.test")) {
 			AsalaeConnector http = new AsalaeConnector(param);
-			http.setVeryVerbose(true);
+			http.setVeryVerbose(false);
 
-			System.out.println("Testing Appel TestPOSTAsalae");
+			System.out.println("\n\nTesting Appel TestPOSTAsalae");
 			System.out.println("Working Directory = " +
 					System.getProperty("user.dir"));
 			try {
@@ -444,7 +444,7 @@ extends TestCase
 		if (param.loadFile("param.config.test")) {
 			AsalaeConnector http = new AsalaeConnector(param);
 
-			System.out.println("Testing Appel TestPOSTAsalae");
+			System.out.println("\n\nTesting Appel TestPOSTAsalae");
 			System.out.println("Working Directory = " +
 					System.getProperty("user.dir"));
 			try {

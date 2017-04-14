@@ -107,6 +107,7 @@ public class AsalaeConnector {
     }
 
     public AsalaeReturn getACK(String transferIdentifier, String tranferringAgency) {
+    	final String keyToSearch = "TransferReplyIdentifier";
     	HashMap<String, String> namedParameters = new  HashMap<String, String>();
     	namedParameters.putIfAbsent("sequence", "ArchiveTransfer");
     	namedParameters.putIfAbsent("message", "Acknowledgement");
@@ -115,29 +116,34 @@ public class AsalaeConnector {
     	AsalaeReturn response = callGetMethod("/restservices/sedaMessages", "application/xml", namedParameters);
     	// Extraction de ArchiveTransferReply/TransferReplyIdentifier
     	// La date de transfert est dans ArchiveTransferReply/Date
-    	// System.out.println(response.message);
+    	if (bVeryVerbose)
+    		System.out.println(response.message);
     	if (response.statusCode == 200) {
     		SaxExtractor saxExtractor= new SaxExtractor();
-    		saxExtractor.addKeyToExtract("TransferReplyIdentifier");
+    		saxExtractor.addKeyToExtract(keyToSearch);
     		saxExtractor.demarrerExtraction(response.message);
-    		response.message = saxExtractor.getExtractedValue();
+    		response.message = saxExtractor.getExtractedValue(keyToSearch);
     	}
         return response;
     }
 
     public AsalaeReturn getATR(String transferIdentifier, String tranferringAgency) {
+    	final String keyToSearch = "TransferAcceptanceIdentifier";
     	HashMap<String, String> namedParameters = new  HashMap<String, String>();
+    	
     	namedParameters.putIfAbsent("sequence", "ArchiveTransfer");
     	namedParameters.putIfAbsent("message", "ArchiveTransferReply");
     	namedParameters.putIfAbsent("originMessageIdentifier", transferIdentifier);
     	namedParameters.putIfAbsent("originOrganizationIdentification", tranferringAgency);
     	AsalaeReturn response = callGetMethod("/restservices/sedaMessages", "application/xml", namedParameters);
     	// Extraction de ArchiveTransferAcceptance/TransferAcceptanceIdentifier
+    	if (bVeryVerbose)
+    		System.out.println(response.message);
     	if (response.statusCode == 200) {
     		SaxExtractor saxExtractor= new SaxExtractor();
-    		saxExtractor.addKeyToExtract("TransferReplyIdentifier");
+    		saxExtractor.addKeyToExtract(keyToSearch);
     		saxExtractor.demarrerExtraction(response.message);
-    		response.message = saxExtractor.getExtractedValue();
+    		response.message = saxExtractor.getExtractedValue(keyToSearch);
     	}
     	return response;
     }
