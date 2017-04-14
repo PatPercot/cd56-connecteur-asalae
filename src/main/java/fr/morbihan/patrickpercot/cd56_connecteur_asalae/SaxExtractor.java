@@ -88,6 +88,10 @@ public class SaxExtractor extends DefaultHandler {
 	public void characters(char[] caracteres, int debut, int longueur) {
 		if (keysToExtract.contains(currentKey)) {
 			String valueOfKey = new String(caracteres, debut, longueur);
+			if (extractedTags.contains(currentKey)) {
+				String old = extractedTags.get(currentKey);
+				valueOfKey = old + valueOfKey;
+			}
 			extractedTags.put(currentKey, valueOfKey);
 		}
 	}		

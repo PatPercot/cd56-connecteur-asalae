@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.Date;
 import java.util.HashMap;
 
 import org.apache.http.Header;
@@ -27,6 +28,13 @@ import org.apache.commons.codec.binary.Base64;
  * 
  */
 public class AsalaeConnector {
+	final String requestATR = "ArchiveTransferReply";
+	final String requestATA = "ArchiveTransferAcceptance";
+	final String tr_identifier = "TransferReplyIdentifier";
+	final String dateTransfert = "Date";
+	final String request = "ArchiveTransferReply";
+	final String ta_identifier = "TransferAcceptanceIdentifier";
+
 	private ConfigFile param;
 
 	private boolean bVerbose = false;
@@ -107,8 +115,8 @@ public class AsalaeConnector {
     }
 
     public AsalaeReturn getACK(String transferIdentifier, String tranferringAgency) {
-    	final String keyToSearch = "TransferReplyIdentifier";
     	HashMap<String, String> namedParameters = new  HashMap<String, String>();
+    	
     	namedParameters.putIfAbsent("sequence", "ArchiveTransfer");
     	namedParameters.putIfAbsent("message", "Acknowledgement");
     	namedParameters.putIfAbsent("originMessageIdentifier", transferIdentifier);
@@ -120,15 +128,20 @@ public class AsalaeConnector {
     		System.out.println(response.message);
     	if (response.statusCode == 200) {
     		SaxExtractor saxExtractor= new SaxExtractor();
-    		saxExtractor.addKeyToExtract(keyToSearch);
+    		saxExtractor.addKeyToExtract(requestATR);
+    		saxExtractor.addKeyToExtract(requestATA);
+    		saxExtractor.addKeyToExtract(tr_identifier);
+    		saxExtractor.addKeyToExtract(dateTransfert);
     		saxExtractor.demarrerExtraction(response.message);
-    		response.message = saxExtractor.getExtractedValue(keyToSearch);
+    		response.message = saxExtractor.getExtractedValue(tr_identifier);
+    		response.dateTransfert = saxExtractor.getExtractedValue(dateTransfert);
+    		response.ArchiveTransferReply = saxExtractor.getExtractedValue(requestATR);
+    		response.ArchiveTransferAcceptance = saxExtractor.getExtractedValue(requestATA);
     	}
         return response;
     }
 
-    public AsalaeReturn getATR(String transferIdentifier, String tranferringAgency) {
-    	final String keyToSearch = "TransferAcceptanceIdentifier";
+    public AsalaeReturn getATA(String transferIdentifier, String tranferringAgency) {
     	HashMap<String, String> namedParameters = new  HashMap<String, String>();
     	
     	namedParameters.putIfAbsent("sequence", "ArchiveTransfer");
@@ -141,22 +154,55 @@ public class AsalaeConnector {
     		System.out.println(response.message);
     	if (response.statusCode == 200) {
     		SaxExtractor saxExtractor= new SaxExtractor();
-    		saxExtractor.addKeyToExtract(keyToSearch);
+    		saxExtractor.addKeyToExtract(requestATR);
+    		saxExtractor.addKeyToExtract(requestATA);
+    		saxExtractor.addKeyToExtract(ta_identifier);
+    		saxExtractor.addKeyToExtract(dateTransfert);
     		saxExtractor.demarrerExtraction(response.message);
-    		response.message = saxExtractor.getExtractedValue(keyToSearch);
+    		response.message = saxExtractor.getExtractedValue(ta_identifier);
+    		response.dateTransfert = saxExtractor.getExtractedValue(dateTransfert);
+    		response.ArchiveTransferReply = saxExtractor.getExtractedValue(requestATR);
+    		response.ArchiveTransferAcceptance = saxExtractor.getExtractedValue(requestATA);
     	}
     	return response;
     }
 
-    public AsalaeReturn getATRAndCheckDate(String transferIdentifier, String tranferringAgency) {
-    	AsalaeReturn response = getATR(transferIdentifier, tranferringAgency);
+    public AsalaeReturn getATAandCheckAlert(String transferIdentifier, String tranferringAgency) {
+    	AsalaeReturn response = getATA(transferIdentifier, tranferringAgency);
     	// On a une archive qui n'a pas encore été traitée
     	// Vérification du temps depuis lequel elle est en attente
     	if (response.statusCode == 500 && response.message.equals("Transfert en cours de traitement")) {
     		response = getACK(transferIdentifier, tranferringAgency);
-    		// TODO: vérifier les dates
-    		// TODO: getACK doit aussi extraire les dates
-    		// TODO: La classe SaxExtract doit être modifiée pour extraire plusieurs informations
+    		if (response.getStatusCode() == 200) {
+    			Date dateTransfert = Utils.getDateTime(response.getDateTransfert());
+    			long elapsedTime = Utils.getDiffToNow(dateTransfert) / 60000L;
+    			long lDelai = new java.math.BigInteger(param.getDelaiAlerteSae(), 10).longValue();
+    			long lDelaiMax = new java.math.BigInteger(param.getDureeEmissionAlerte(), 10).longValue() + lDelai;
+    			if (elapsedTime > lDelai && (lDelaiMax == 0 || elapsedTime < lDelaiMax)) {
+        			long lDepassement = elapsedTime  - lDelai;
+    				response.avertissement = "ALERTE: l'archive n'a pas été intégrée. Délai dépassé de " + lDepassement + " minutes";
+    			}
+    		}
+    	}
+    	return response;
+    }
+
+    public AsalaeReturn getATAandCheckError(String transferIdentifier, String tranferringAgency) {
+    	AsalaeReturn response = getATA(transferIdentifier, tranferringAgency);
+    	// On a une archive qui n'a pas encore été traitée
+    	// Vérification du temps depuis lequel elle est en attente
+    	if (response.statusCode == 500 && response.message.equals("Transfert en cours de traitement")) {
+    		response = getACK(transferIdentifier, tranferringAgency);
+    		if (response.getStatusCode() == 200) {
+    			Date dateTransfert = Utils.getDateTime(response.getDateTransfert());
+    			long elapsedTime = Utils.getDiffToNow(dateTransfert);
+    			long lDelai = new java.math.BigInteger(param.getDelaiErreurSae(), 10).longValue();
+    			long lDelaiMax = new java.math.BigInteger(param.getDureeEmissionErreur(), 10).longValue() + lDelai;
+    			if (elapsedTime > lDelai && (lDelaiMax == 0 || elapsedTime < lDelaiMax)) {
+        			long lDepassement = elapsedTime  - lDelai;
+    				response.avertissement = "ERREUR: l'archive n'a pas été intégrée. Délai dépassé de " + lDepassement + " minutes";
+    			}
+    		}
     	}
     	return response;
     }
