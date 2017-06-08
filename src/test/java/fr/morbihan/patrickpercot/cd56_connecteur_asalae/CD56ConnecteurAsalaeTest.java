@@ -34,6 +34,10 @@ extends TestCase
 	 */
 	public static Test suite()
 	{
+		
+		// ATTENTION : pour tous les tests, sauf 2, ce sont les fichiers param.config.test 
+		// qui doivent contenir les paramètres d'authentification
+		
 		TestSuite test = new TestSuite();
 		test.addTest(new CD56ConnecteurAsalaeTest("testConfigFile"));
 
@@ -51,13 +55,18 @@ extends TestCase
 		test.addTest(new CD56ConnecteurAsalaeTest("testVersionAsalaeParDefaut"));
 		test.addTest(new CD56ConnecteurAsalaeTest("testVersionAsalaeSaeInt"));
 
-		test.addTest(new CD56ConnecteurAsalaeTest("testConnecteurParDefaut"));
-		test.addTest(new CD56ConnecteurAsalaeTest("testConnecteurSaeInt"));
-
-		/*
+		/* ATTENTION : tests retirés parce qu'il risquent de polluer le SAE de pré production
+		 * Les remettre en service si nécessaire
+		 * 
         test.addTest(new CD56ConnecteurAsalaeTest("testPOSTAsalae"));
         test.addTest(new CD56ConnecteurAsalaeTest("testPOSTAsalaeErreur"));
 		 */      
+
+		// ATTENTION : pour ces deux tests, c'est le fichier param.config qui doit contenir les
+		// paramètres d'authentification
+		test.addTest(new CD56ConnecteurAsalaeTest("testConnecteurParDefaut"));
+		test.addTest(new CD56ConnecteurAsalaeTest("testConnecteurSaeInt"));
+
 		return test;
 	}
 
@@ -283,7 +292,8 @@ extends TestCase
 		AsalaeConnectorLauncher pmag = new AsalaeConnectorLauncher();
 		String[] args = new String[1];
 		args[0] = "connecter-serveur";
-		pmag.execMain(args);
+		String result = pmag.execMain(args);
+		assertEquals("OK: 'V1.6.2'", result);
 	}
 
 
@@ -297,8 +307,9 @@ extends TestCase
 		args[0] = "--serveur";
 		args[1] = "SAE-INT";
 		args[2] = "connecter-serveur";
-		pmag.execMain(args);
-	}
+		String result = pmag.execMain(args);
+		assertEquals("OK: 'V1.6.2'", result);
+}
 
     
 
