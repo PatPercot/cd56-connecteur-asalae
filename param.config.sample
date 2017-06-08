@@ -1,8 +1,51 @@
 # Fichier de configuration du connecteur
+# Le fichier comprend des sections [SECTION] qui correspondent chacune à un serveur
+# Le premier serveur déclaré est le serveur qui sera utilisé par défaut si aucun
+# serveur n'est spécifié dans les appels du connecteur
+#
+#
+#	Une section est constituée d'une ligne contenant un identifiant alphanumérique entouré de crochets droits
+#	Caractères autorisés entre '' : 'A-Z' 'a-z' '_-'
+#	Par exemple :
+#	[SAE_INTERMEDIAIRE]
+#	[SAE_DEFINITIF]
+#
+#	Une section contient des entrées de la forme :
+#	motcle = valeur
+#
+#	Les mots-clés autorisés sont les suivants (séparés par ,) :
+#	UrlAsalae, username, password, delaiAlerteSae, dureeEmissionAlerte, delaiErreurSae, dureeEmissionErreur
+#
+#	Une section est terminée par le début de la section suivante
+#
+# 
+
+
+############################################################################################################	
+[SAE-INT]
+############################################################################################################	
 
 # Correspond � l'URL du serveur du SAE
-UrlAsalae = http://sae.domaine.fr
+UrlAsalae = http://sae-int.domaine.fr
 
 # Nom et mot de passe de l'utilisateur habilité à appeler les web services
 username = web-service
 password = mot-de-passe
+
+
+
+
+
+############################################################################################################	
+[SAE-DEF]
+############################################################################################################	
+
+# Correspond � l'URL du serveur du SAE
+UrlAsalae = http://sae-def.domaine.fr
+
+# Nom et mot de passe de l'utilisateur habilité à appeler les web services
+username = web-service
+password = mot-de-passe
+
+
+
