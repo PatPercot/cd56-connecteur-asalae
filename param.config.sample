@@ -1,13 +1,78 @@
 # Fichier de configuration du connecteur
+# Le fichier comprend des sections [SECTION] qui correspondent chacune à un serveur
+# Le premier serveur déclaré est le serveur qui sera utilisé par défaut si aucun
+# serveur n'est spécifié dans les appels du connecteur
+#
+#
+#	Une section est constituée d'une ligne contenant un identifiant alphanumérique entouré de crochets droits
+#	Caractères autorisés entre '' : 'A-Z' 'a-z' '_-'
+#	Par exemple :
+#	[SAE_INTERMEDIAIRE]
+#	[SAE_DEFINITIF]
+#
+#	Une section contient des entrées de la forme :
+#	motcle = valeur
+#
+#	Les mots-clés autorisés sont les suivants (séparés par ,) :
+#	UrlAsalae, username, password, delaiAlerteSae, dureeEmissionAlerte, delaiErreurSae, dureeEmissionErreur
+#
+#	Une section est terminée par le début de la section suivante
+#
+# 
+
+
+############################################################################################################	
+[SAE-INT]
+############################################################################################################	
 
 # Correspond � l'URL du serveur du SAE
-UrlAsalae = http://sae.domaine.fr
+UrlAsalae = http://sae-int.domaine.fr
 
 # Nom et mot de passe de l'utilisateur habilité à appeler les web services
 username = web-service
 password = mot-de-passe
 
+# Tous les délais et durées sont en minutes
 
+# Délai avant émission d'une alerte pour les archives récemment transférées
+# Indication de risque de bordereau non conforme 
+# 1 heure (60 minutes)
+delaiAlerteSae = 60
+
+# Temps durant lequel l'alerte pourra être émise (0 pour désactiver)
+# T1 : Transfert de l'archive ..... T2 = T1 +  delaiAlerteSae ..... T3 = T1 +  delaiAlerteSae + dureeEmissionAlerte
+#                                   Début alerte                    Fin alerte
+# 2 heures (120 minutes)
+dureeEmissionAlerte = 120
+
+
+
+# Délai avant émission d'une erreur
+# Indication de risque de traitement manuel attendu 
+# 3 jours (3 x 24 x 60 minutes)
+delaiErreurSae = 4320
+
+
+# Temps durant lequel l'erreur pourra être émise (0 pour désactiver)
+# T1 : Transfert de l'archive ..... T4 = T1 +  delaiErreurSae ..... T5 = T1 +  delaiErreurSae + dureeEmissionErreur
+#                                   Début erreur                    Fin alerte
+# 2 jours (2 x 24 x 60 minutes)
+dureeEmissionErreur = 2880
+	
+
+
+
+
+############################################################################################################	
+[SAE-DEF]
+############################################################################################################	
+
+# Correspond � l'URL du serveur du SAE
+UrlAsalae = http://sae-def.domaine.fr
+
+# Nom et mot de passe de l'utilisateur habilité à appeler les web services
+username = web-service
+password = mot-de-passe
 
 # Tous les délais et durées sont en minutes
 

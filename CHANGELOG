@@ -4,7 +4,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.0.1]
+### Utilisation de plusieurs serveurs
+	- Ajout de section pour décrire plusieurs qserveurs dans le fichier de configuration
+	- Possibilité de sélectionner le serveur lors de l'appel du connecteur
+	
 ## [1.0.0]
-### Première version fonctionnelle en attente
+### Première version fonctionnelle
 	- Trois commandes pour l'exécutable
 	- Documentation de l'utilisation de l'outil
+	
+	

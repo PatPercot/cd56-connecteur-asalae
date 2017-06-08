@@ -2,6 +2,7 @@ package fr.morbihan.patrickpercot.cd56_connecteur_asalae;
 
 import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.JsonPath;
+// import com.jayway.jsonpath.PathNotFoundException;
 
 /**
  * @author Patrick Percot - Direction des systèmes d'information - Conseil départemental du Morbihan 
@@ -10,6 +11,7 @@ import com.jayway.jsonpath.JsonPath;
  *  
  */
 public class AsalaeConnectorLauncher {
+	protected String serveur;
 	protected boolean bVerbose = false;
 	protected boolean bVeryVerbose = false;
 	protected boolean bHasRun = false;
@@ -29,9 +31,8 @@ public class AsalaeConnectorLauncher {
 		AsalaeConnectorLauncher pmag = new AsalaeConnectorLauncher();
 		pmag.execMain(args);
 	}
-
-	protected void execMain( String[] args )  {
-		this.args = args;
+	
+	protected String[] analyserOptions(String[] args) {
 		if (args.length > 1 && ("--verbose".equals(args[0]) || "-v".equals(args[0]) 
 				|| ("--veryverbose".equals(args[0]) || "-vv".equals(args[0])) )) {
 			if ("--veryverbose".equals(args[0]) || "-vv".equals(args[0])) 
@@ -46,6 +47,25 @@ public class AsalaeConnectorLauncher {
 			// On remplace les arguments initiaux par la copie sans --verbose
 			args = newArgs;
 		}
+		if (args.length > 2 && ("--serveur".equals(args[0]) || "-s".equals(args[0]) )) {
+			serveur = args[1];
+			int len = args.length -2;
+			String[] newArgs = new String[len];
+			for (int i = 0; i < len; ++i) {
+				newArgs[i] = args[i + 2];
+			}
+			// On remplace les arguments initiaux par la copie sans --verbose
+			args = newArgs;
+		} else
+			serveur = "";
+		
+		// On retourne les anciens arguments ou les nouveaux purgés des options 
+		return args;
+	}
+
+	protected void execMain( String[] args )  {
+		this.args = args;
+		args = analyserOptions(args);
 		
 		if (bVerbose) {
 			System.out.print("Exécution avec les paramètres suivants : ");
@@ -62,6 +82,9 @@ public class AsalaeConnectorLauncher {
         	System.err.println("ERROR: Le fichier de configuration est introuvable ou incomplet");
         	bHasRun = true;
         } else {
+            // On sélectionne le serveur demandé -si vide, c'est le serveur par défaut qui est sélectionné)
+        	param.selectionServeur(serveur);
+            
             http = new AsalaeConnector(param);
             if (bVerbose)
             	http.setVerbose(bVerbose);

@@ -38,6 +38,7 @@ extends TestCase
 	{
 		TestSuite test = new TestSuite();
 		test.addTest(new CD56ConnecteurAsalaeTest("testConfigFile"));
+<<<<<<< HEAD
 		test.addTest(new CD56ConnecteurAsalaeTest("testUrlServeur"));
 		test.addTest(new CD56ConnecteurAsalaeTest("testUzerName"));
 		test.addTest(new CD56ConnecteurAsalaeTest("testPassword"));
@@ -57,6 +58,25 @@ extends TestCase
 		test.addTest(new CD56ConnecteurAsalaeTest("testGetACKEnAttente"));
 		test.addTest(new CD56ConnecteurAsalaeTest("testGetATAEnAttente"));
 
+=======
+
+		test.addTest(new CD56ConnecteurAsalaeTest("testUrlServeurDefaut"));
+		test.addTest(new CD56ConnecteurAsalaeTest("testUzerNameDefaut"));
+		test.addTest(new CD56ConnecteurAsalaeTest("testPasswordDefaut"));
+
+		test.addTest(new CD56ConnecteurAsalaeTest("testUrlServeurSaeInt"));
+		test.addTest(new CD56ConnecteurAsalaeTest("testUzerNameSaeInt"));
+		test.addTest(new CD56ConnecteurAsalaeTest("testPasswordSaeInt"));
+
+		test.addTest(new CD56ConnecteurAsalaeTest("testPingAsalaeParDefaut"));
+		test.addTest(new CD56ConnecteurAsalaeTest("testPingAsalaeSaeInt"));
+
+		test.addTest(new CD56ConnecteurAsalaeTest("testVersionAsalaeParDefaut"));
+		test.addTest(new CD56ConnecteurAsalaeTest("testVersionAsalaeSaeInt"));
+
+		test.addTest(new CD56ConnecteurAsalaeTest("testConnecteurParDefaut"));
+		test.addTest(new CD56ConnecteurAsalaeTest("testConnecteurSaeInt"));
+>>>>>>> master
 
 		/*
         test.addTest(new CD56ConnecteurAsalaeTest("testPOSTAsalae"));
@@ -89,38 +109,65 @@ extends TestCase
 	 * 
 	 */
 	public void testConfigFile() {
+<<<<<<< HEAD
 		System.out.println("\n\nTesting Chargement fichier de configuration");
+=======
+		System.out.println("Testing Chargement fichier de configuration");
+>>>>>>> master
 		if (initConfigFile()) {
 		} else {
 			assertFalse("Chargement du fichier dans un emplacement connu", false);
 		}
 	}
 
+<<<<<<< HEAD
 	public void testUrlServeur() {
 		if (initConfigFile()) {
 			System.out.println("\n\nTesting testUrlServeur");
+=======
+	public void testUrlServeurDefaut() {
+		if (initConfigFile()) {
+			System.out.println("Testing testUrlServeur par défaut");
+>>>>>>> master
 			assertEquals("http://sae.morbihan.fr", param.getUrlAsalae());
 		}
 	}
 
+<<<<<<< HEAD
 	public void testUzerName() {
 		if (initConfigFile()) {
 			System.out.println("\n\nTesting testUzerName");
+=======
+	public void testUzerNameDefaut() {
+		if (initConfigFile()) {
+			System.out.println("Testing testUzerName par défaut");
+>>>>>>> master
 			assertEquals("web-service", param.getUsername());
 		}
 	}
 
+<<<<<<< HEAD
 	public void testPassword() {
 		if (initConfigFile()) {
 			System.out.println("\n\nTesting testPassword");
+=======
+	public void testPasswordDefaut() {
+		if (initConfigFile()) {
+			System.out.println("Testing testPassword par défaut");
+>>>>>>> master
 			String passwd = param.getPassword();
 			String message = "Le mot de passe ne doit pas être vide";
 			assertNotNull(message, passwd);
 			assertFalse(message, passwd.isEmpty());
+<<<<<<< HEAD
+=======
+			assertTrue(passwd.startsWith("78b1b1a44976"));
+>>>>>>> master
 		}
 	}
 
 
+<<<<<<< HEAD
 
 
 	/*
@@ -274,6 +321,56 @@ extends TestCase
 				response.trace();
 				assert(response.getStatusCode() == 200);
 				assert(response.getMessage().equals("ATR_151"));
+=======
+	public void testUrlServeurSaeInt() {
+		if (initConfigFile()) {
+			param.selectionServeur("SAE-INT");
+			System.out.println("Testing testUrlServeur SAE-INT");
+			assertEquals("http://sae-int.morbihan.fr", param.getUrlAsalae());
+		}
+	}
+
+	public void testUzerNameSaeInt() {
+		if (initConfigFile()) {
+			param.selectionServeur("SAE-INT");
+			System.out.println("Testing testUzerName SAE-INT");
+			assertEquals("web-service", param.getUsername());
+		}
+	}
+
+	public void testPasswordSaeInt() {
+		if (initConfigFile()) {
+			param.selectionServeur("SAE-INT");
+			System.out.println("Testing testPassword SAE-INT");
+			String passwd = param.getPassword();
+			String message = "Le mot de passe ne doit pas être vide";
+			assertNotNull(message, passwd);
+			assertFalse(message, passwd.isEmpty());
+			assertFalse(passwd.startsWith("78b1b1a44976"));
+		}
+	}
+
+
+
+
+	/*
+	 * Test pour vérification du bon fonctionnement de la connexion 
+	 * 
+	 */
+	public void testPingAsalaeParDefaut() {
+		ConfigFile param = new ConfigFile();
+		if (param.loadFile("param.config.test")) {
+			AsalaeConnector http = new AsalaeConnector(param);
+
+			System.out.println("Testing Appel TestPingAsalae");
+			try {
+				AsalaeReturn response = http.TestPingAsalae();
+				//print result
+				System.out.println("Message = " + response.getMessage());
+				System.out.println("Code = " + response.getStatusCode());
+				assert(response.getMessage().startsWith("\"webservices as@lae accessibles\""));
+				Assert.assertEquals("Code de retour de Ping", response.getStatusCode(), 200);
+>>>>>>> master
 
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
@@ -289,6 +386,7 @@ extends TestCase
 	}
 
 	/*
+<<<<<<< HEAD
 	 * Test pour vérification du bon fonctionnement de getATR
 	 * 
 	 */
@@ -307,6 +405,25 @@ extends TestCase
 				response.trace();
 				assert(response.getStatusCode() == 200);
 				assert(response.getMessage().equals("ATA_55"));
+=======
+	 * Test pour vérification du bon fonctionnement de la connexion 
+	 * 
+	 */
+	public void testPingAsalaeSaeInt() {
+		ConfigFile param = new ConfigFile();
+		if (param.loadFile("param.config.test")) {
+			param.selectionServeur("SAE-INT");
+			AsalaeConnector http = new AsalaeConnector(param);
+
+			System.out.println("Testing Appel TestPingAsalae");
+			try {
+				AsalaeReturn response = http.TestPingAsalae();
+				//print result
+				System.out.println("Message = " + response.getMessage());
+				System.out.println("Code = " + response.getStatusCode());
+				assert(response.getMessage().startsWith("\"webservices as@lae accessibles\""));
+				Assert.assertEquals("Code de retour de Ping", response.getStatusCode(), 200);
+>>>>>>> master
 
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
@@ -322,6 +439,7 @@ extends TestCase
 	}
 
 	/*
+<<<<<<< HEAD
 	 * Test pour vérification du bon fonctionnement de getAck
 	 * 
 	 */
@@ -341,6 +459,24 @@ extends TestCase
 				response.trace();
 				assert(response.getStatusCode() == 500);
 				assert(response.getMessage().contains("Transfert d'archive à l'origine de la séquence non trouvé : XXXCD56_PES_MANUEL68a5755aecfd02a33c88d6ff26e5ae48598ff3724e3fea3bc741c2d6c7cf6d07@2017-04-06T17:52:52.0000977Z"));
+=======
+	 * Test pour vérification du bon fonctionnement de la connexion 
+	 * 
+	 */
+	public void testVersionAsalaeParDefaut() {
+		ConfigFile param = new ConfigFile();
+		if (param.loadFile("param.config.test")) {
+			AsalaeConnector http = new AsalaeConnector(param);
+
+			System.out.println("Testing Appel testVersionAsalae");
+			try {
+				AsalaeReturn response = http.TestVersionAsalae();
+				//print result
+				System.out.println("Message = " + response.getMessage());
+				System.out.println("Code = " + response.getStatusCode());
+				assert(response.getMessage().startsWith("{\"application\":\"as@lae\",\"denomination\":\"\",\"version\":\"V1.6.2\"}"));
+				Assert.assertEquals("Code de retour de version", response.getStatusCode(), 200);
+>>>>>>> master
 
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
@@ -356,6 +492,7 @@ extends TestCase
 	}
 
 	/*
+<<<<<<< HEAD
 	 * Test pour vérification du bon fonctionnement de getATR
 	 * 
 	 */
@@ -374,6 +511,25 @@ extends TestCase
 				response.trace();
 				assert(response.getStatusCode() == 500);
 				assert(response.getMessage().contains("Transfert en cours de traitement"));
+=======
+	 * Test pour vérification du bon fonctionnement de la connexion 
+	 * 
+	 */
+	public void testVersionAsalaeSaeInt() {
+		ConfigFile param = new ConfigFile();
+		if (param.loadFile("param.config.test")) {
+			param.selectionServeur("SAE-INT");
+			AsalaeConnector http = new AsalaeConnector(param);
+
+			System.out.println("Testing Appel testVersionAsalae");
+			try {
+				AsalaeReturn response = http.TestVersionAsalae();
+				//print result
+				System.out.println("Message = " + response.getMessage());
+				System.out.println("Code = " + response.getStatusCode());
+				assert(response.getMessage().startsWith("{\"application\":\"as@lae\",\"denomination\":\"\",\"version\":\"V1.6.2\"}"));
+				Assert.assertEquals("Code de retour de version", response.getStatusCode(), 200);
+>>>>>>> master
 
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
@@ -389,6 +545,7 @@ extends TestCase
 	}
 
 	/*
+<<<<<<< HEAD
 	 * Test pour vérification du bon fonctionnement de getATR
 	 * 
 	 */
@@ -458,6 +615,34 @@ extends TestCase
 	
 	
 	
+=======
+	 * Test pour vérification du bon fonctionnement de la connexion 
+	 * 
+	 */
+	public void testConnecteurParDefaut() {
+		AsalaeConnectorLauncher pmag = new AsalaeConnectorLauncher();
+		String[] args = new String[1];
+		args[0] = "connecter-serveur";
+		pmag.execMain(args);
+	}
+
+
+	/*
+	 * Test pour vérification du bon fonctionnement de la connexion 
+	 * 
+	 */
+	public void testConnecteurSaeInt() {
+		AsalaeConnectorLauncher pmag = new AsalaeConnectorLauncher();
+		String[] args = new String[3];
+		args[0] = "--serveur";
+		args[1] = "SAE-INT";
+		args[2] = "connecter-serveur";
+		pmag.execMain(args);
+	}
+
+    
+
+>>>>>>> master
 	/*
 	 * Test pour vérification du bon fonctionnement des HTTPPOST
 	 * 
@@ -466,15 +651,26 @@ extends TestCase
 		ConfigFile param = new ConfigFile();
 		if (param.loadFile("param.config.test")) {
 			AsalaeConnector http = new AsalaeConnector(param);
+<<<<<<< HEAD
 			http.setVeryVerbose(false);
 
 			System.out.println("\n\nTesting Appel TestPOSTAsalae");
+=======
+
+			System.out.println("Testing Appel TestPOSTAsalae");
+>>>>>>> master
 			System.out.println("Working Directory = " +
 					System.getProperty("user.dir"));
 			try {
 				AsalaeReturn response = http.callPostDocuments("data/bordereau-PESV2_DEP56-1.xml"
 						, "data/mandat-et-ar-1.zip");
+<<<<<<< HEAD
 				response.trace();
+=======
+				//print result
+				System.out.println("Message = " + response.getMessage());
+				System.out.println("Code = " + response.getStatusCode());
+>>>>>>> master
 				assert(response.getMessage().startsWith("{\"date_du_depot\":\""));
 				Assert.assertEquals("Code de retour de POST", response.getStatusCode(), 200);
 
@@ -500,13 +696,23 @@ extends TestCase
 		if (param.loadFile("param.config.test")) {
 			AsalaeConnector http = new AsalaeConnector(param);
 
+<<<<<<< HEAD
 			System.out.println("\n\nTesting Appel TestPOSTAsalae");
+=======
+			System.out.println("Testing Appel TestPOSTAsalae");
+>>>>>>> master
 			System.out.println("Working Directory = " +
 					System.getProperty("user.dir"));
 			try {
 				AsalaeReturn response = http.callPostDocuments("data/bordereau-PESV2_DEP56-erreur.xml"
 						, "data/mandat-et-ar-erreur.zip");
+<<<<<<< HEAD
 				response.trace();
+=======
+				//print result
+				System.out.println("Message = " + response.getMessage());
+				System.out.println("Code = " + response.getStatusCode());
+>>>>>>> master
 				assert(response.getMessage().equals("Erreur de donnée du formulaire : la taille du fichier transmis \"bordereau-PESV2_DEP56-erreur.xml\" est nulle"));
 				Assert.assertEquals("Code de retour de POST", response.getStatusCode(), 400);
 
