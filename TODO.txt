@@ -1,0 +1,7 @@
+2017-10-04 :
+- Erreur avec certificat auto-signé
+             ERROR: (callGetMethod) une exception de type IOException s'est produite : 'sun.security.validator.ValidatorException: PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target'
+             ERROR: (connecter-serveur) une exception de type class java.lang.NullPointerException s'est produite null
+- Erreur : en cas de section serveur spécifiée mais non trouvée, déclencher une erreur
+             Le comportement actuel est de faire le choix du serveur par défaut ce qui est dangereux
+             
