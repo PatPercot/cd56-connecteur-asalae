@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.1.0]
+### Ajout des commandes de vérification ACK et ATR
+	- Cinq commandes pour l'exécutable (tester-serveur, connecter-serveur,
+		transferer-archive, get-ack, get-atr)
+	- Documentation de l'utilisation de l'outil
+	
 ## [1.0.1]
 ### Utilisation de plusieurs serveurs
 	- Ajout de section pour décrire plusieurs qserveurs dans le fichier de configuration
@@ -13,5 +19,4 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Première version fonctionnelle
 	- Trois commandes pour l'exécutable
 	- Documentation de l'utilisation de l'outil
-	
 	

@@ -32,6 +32,33 @@ UrlAsalae = http://sae-int.domaine.fr
 username = web-service
 password = mot-de-passe
 
+# Tous les délais et durées sont en minutes
+
+# Délai avant émission d'une alerte pour les archives récemment transférées
+# Indication de risque de bordereau non conforme 
+# 1 heure (60 minutes)
+delaiAlerteSae = 60
+
+# Temps durant lequel l'alerte pourra être émise (0 pour désactiver)
+# T1 : Transfert de l'archive ..... T2 = T1 +  delaiAlerteSae ..... T3 = T1 +  delaiAlerteSae + dureeEmissionAlerte
+#                                   Début alerte                    Fin alerte
+# 2 heures (120 minutes)
+dureeEmissionAlerte = 120
+
+
+
+# Délai avant émission d'une erreur
+# Indication de risque de traitement manuel attendu 
+# 3 jours (3 x 24 x 60 minutes)
+delaiErreurSae = 4320
+
+
+# Temps durant lequel l'erreur pourra être émise (0 pour désactiver)
+# T1 : Transfert de l'archive ..... T4 = T1 +  delaiErreurSae ..... T5 = T1 +  delaiErreurSae + dureeEmissionErreur
+#                                   Début erreur                    Fin alerte
+# 2 jours (2 x 24 x 60 minutes)
+dureeEmissionErreur = 2880
+	
 
 
 
@@ -47,5 +74,30 @@ UrlAsalae = http://sae-def.domaine.fr
 username = web-service
 password = mot-de-passe
 
+# Tous les délais et durées sont en minutes
+
+# Délai avant émission d'une alerte pour les archives récemment transférées
+# Indication de risque de bordereau non conforme 
+# 1 heure (60 minutes)
+delaiAlerteSae = 60
+
+# Temps durant lequel l'alerte pourra être émise (0 pour désactiver)
+# T1 : Transfert de l'archive ..... T2 = T1 +  delaiAlerteSae ..... T3 = T1 +  delaiAlerteSae + dureeEmissionAlerte
+#                                   Début alerte                    Fin alerte
+# 2 heures (120 minutes)
+dureeEmissionAlerte = 120
 
 
+
+# Délai avant émission d'une erreur
+# Indication de risque de traitement manuel attendu 
+# 3 jours (3 x 24 x 60 minutes)
+delaiErreurSae = 4320
+
+
+# Temps durant lequel l'erreur pourra être émise (0 pour désactiver)
+# T1 : Transfert de l'archive ..... T4 = T1 +  delaiErreurSae ..... T5 = T1 +  delaiErreurSae + dureeEmissionErreur
+#                                   Début erreur                    Fin alerte
+# 2 jours (2 x 24 x 60 minutes)
+dureeEmissionErreur = 2880
+	

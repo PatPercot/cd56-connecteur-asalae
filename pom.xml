@@ -4,7 +4,7 @@
 
   <groupId>fr.morbihan.patrickpercot</groupId>
   <artifactId>cd56-connecteur-asalae</artifactId>
-  <version>1.0.1</version>
+  <version>1.1.0</version>
   <packaging>jar</packaging>
 
   <name>cd56-connecteur-asalae</name>
@@ -58,16 +58,18 @@
       <version>3.8.1</version>
       <scope>test</scope>
     </dependency>
-    <dependency>
-    	<groupId>org.apache.httpcomponents</groupId>
-    	<artifactId>httpclient</artifactId>
-    	<version>4.5.2</version>
-    </dependency>
-    <dependency>
-    	<groupId>org.apache.httpcomponents</groupId>
-    	<artifactId>httpmime</artifactId>
-    	<version>4.5.2</version>
-    </dependency>
+	<!-- https://mvnrepository.com/artifact/org.apache.httpcomponents/httpclient -->
+	<dependency>
+	    <groupId>org.apache.httpcomponents</groupId>
+	    <artifactId>httpclient</artifactId>
+	    <version>4.5.11</version>
+	</dependency>
+	<!-- https://mvnrepository.com/artifact/org.apache.httpcomponents/httpmime -->
+	<dependency>
+	    <groupId>org.apache.httpcomponents</groupId>
+	    <artifactId>httpmime</artifactId>
+	    <version>4.5.11</version>
+	</dependency>
     <dependency>
     	<groupId>com.jayway.jsonpath</groupId>
     	<artifactId>json-path</artifactId>
