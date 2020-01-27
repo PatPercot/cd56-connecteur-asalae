@@ -267,7 +267,7 @@ public class AsalaeConnectorLauncher {
 	        				+ transferIdentifier + "' transféré par '" + transferringAgency + "'");
 	        	}
 	    		try {
-	    			AsalaeReturn response = http.getATA(transferIdentifier, transferringAgency);
+	    			AsalaeReturn response = http.getATR(transferIdentifier, transferringAgency);
 	    			
 	    			if (bVeryVerbose) {
 		    			System.out.println("Message = " + response.getMessage());

@@ -18,7 +18,7 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 
-import org.apache.commons.codec.binary.Base64;
+import java.util.Base64;
 
 
 /**
@@ -28,8 +28,27 @@ import org.apache.commons.codec.binary.Base64;
  * 
  */
 public class AsalaeConnector {
-	final String requestATR = "ArchiveTransferReply";
-	final String requestATA = "ArchiveTransferAcceptance";
+	/*
+	 * Explications sur la récupération de l'état d'un transfert
+	 * Le message pour faire la demande d'accusé de réception est : Acknowledgement
+	 * Le message pour faire la demande d'état d'un tansfert accepté est : ArchiveTransferReply
+	 * 
+	 * En SEDA V0.2
+	 *	Acknowledgement : l'accusé de réception est un ArchiveTransferReply
+	 * 
+	 *	ArchiveTransferReply : la réponse du SAE pour un transfert accepté est un ArchiveTransferAcceptance
+	 *	ArchiveTransferReply : la réponse du SAE pour un transfert rejeté est un ArchiveTransferReply
+	 *	ArchiveTransferReply : la réponse du SAE pour un transfert en attente est HTTP 500
+	 * 
+	 * En SEDA V1.0
+	 *  Acknowledgement : l'accusé de réception est un Acknowledgement
+	 *  ArchiveTransferReply : la réponse du SAE pour un transfert accepté est un ArchiveTransferReply
+	 *  ArchiveTransferReply : la réponse du SAE pour un transfert rejeté est un ArchiveTransferReply
+	 *	ArchiveTransferReply : la réponse du SAE pour un transfert en attente est HTTP 500
+	 *
+	 */
+	final String responseARv02 = "ArchiveTransferReply";
+	final String responseAcceptv02 = "ArchiveTransferAcceptance";
 	final String tr_identifier = "TransferReplyIdentifier";
 	final String dateTransfert = "Date";
 	final String request = "ArchiveTransferReply";
@@ -128,20 +147,20 @@ public class AsalaeConnector {
     		System.out.println(response.message);
     	if (response.statusCode == 200) {
     		SaxExtractor saxExtractor= new SaxExtractor();
-    		saxExtractor.addKeyToExtract(requestATR);
-    		saxExtractor.addKeyToExtract(requestATA);
+    		saxExtractor.addKeyToExtract(responseARv02);
+    		saxExtractor.addKeyToExtract(responseAcceptv02);
     		saxExtractor.addKeyToExtract(tr_identifier);
     		saxExtractor.addKeyToExtract(dateTransfert);
     		saxExtractor.demarrerExtraction(response.message);
     		response.message = saxExtractor.getExtractedValue(tr_identifier);
     		response.dateTransfert = saxExtractor.getExtractedValue(dateTransfert);
-    		response.ArchiveTransferReply = saxExtractor.getExtractedValue(requestATR);
-    		response.ArchiveTransferAcceptance = saxExtractor.getExtractedValue(requestATA);
+    		response.ArchiveTransferReply = saxExtractor.getExtractedValue(responseARv02);
+    		response.ArchiveTransferAcceptance = saxExtractor.getExtractedValue(responseAcceptv02);
     	}
         return response;
     }
 
-    public AsalaeReturn getATA(String transferIdentifier, String tranferringAgency) {
+    public AsalaeReturn getATR(String transferIdentifier, String tranferringAgency) {
     	HashMap<String, String> namedParameters = new  HashMap<String, String>();
     	
     	namedParameters.putIfAbsent("sequence", "ArchiveTransfer");
@@ -154,21 +173,24 @@ public class AsalaeConnector {
     		System.out.println(response.message);
     	if (response.statusCode == 200) {
     		SaxExtractor saxExtractor= new SaxExtractor();
-    		saxExtractor.addKeyToExtract(requestATR);
-    		saxExtractor.addKeyToExtract(requestATA);
+    		saxExtractor.addKeyToExtract(responseARv02);
+    		saxExtractor.addKeyToExtract(responseAcceptv02);
     		saxExtractor.addKeyToExtract(ta_identifier);
+    		saxExtractor.addKeyToExtract(tr_identifier);
     		saxExtractor.addKeyToExtract(dateTransfert);
     		saxExtractor.demarrerExtraction(response.message);
     		response.message = saxExtractor.getExtractedValue(ta_identifier);
+    		if (response.message == null) // Version SEDA 1.0
+    			response.message = saxExtractor.getExtractedValue(tr_identifier);
     		response.dateTransfert = saxExtractor.getExtractedValue(dateTransfert);
-    		response.ArchiveTransferReply = saxExtractor.getExtractedValue(requestATR);
-    		response.ArchiveTransferAcceptance = saxExtractor.getExtractedValue(requestATA);
+    		response.ArchiveTransferReply = saxExtractor.getExtractedValue(responseARv02);
+    		response.ArchiveTransferAcceptance = saxExtractor.getExtractedValue(responseAcceptv02);
     	}
     	return response;
     }
 
     public AsalaeReturn getATAandCheckAlert(String transferIdentifier, String tranferringAgency) {
-    	AsalaeReturn response = getATA(transferIdentifier, tranferringAgency);
+    	AsalaeReturn response = getATR(transferIdentifier, tranferringAgency);
     	// On a une archive qui n'a pas encore été traitée
     	// Vérification du temps depuis lequel elle est en attente
     	if (response.statusCode == 500 && response.message.equals("Transfert en cours de traitement")) {
@@ -188,7 +210,7 @@ public class AsalaeConnector {
     }
 
     public AsalaeReturn getATAandCheckError(String transferIdentifier, String tranferringAgency) {
-    	AsalaeReturn response = getATA(transferIdentifier, tranferringAgency);
+    	AsalaeReturn response = getATR(transferIdentifier, tranferringAgency);
     	// On a une archive qui n'a pas encore été traitée
     	// Vérification du temps depuis lequel elle est en attente
     	if (response.statusCode == 500 && response.message.equals("Transfert en cours de traitement")) {
@@ -212,6 +234,41 @@ public class AsalaeConnector {
     		Code = 500
     		*/
     
+    
+    public AsalaeReturn getArchiveIdentifiersBy(boolean duaTerminee, boolean sortConserver, String serviceVersant, String serviceArchive, String serviceProducteur) {
+    	HashMap<String, String> namedParameters = new  HashMap<String, String>();
+    	
+    	// TODO paramètres éventuelement inconnus
+    	namedParameters.putIfAbsent("DuaStatus", duaTerminee ? "terminee" : "en_cours");
+    	namedParameters.putIfAbsent("AppraisalCode", sortConserver ? "conserver" : "detruire");
+    	namedParameters.putIfAbsent("TransferringAgencyIdentification", serviceVersant);
+    	namedParameters.putIfAbsent("ArchivalAgencyIdentification", serviceArchive);
+    	namedParameters.putIfAbsent("OriginatingAgencyIdentification", serviceProducteur);
+    	
+    	// TODO termeiner le code
+    	AsalaeReturn response = callGetMethod("/restservices/sedaMessages", "application/xml", namedParameters);
+    	// Extraction de ArchiveTransferAcceptance/TransferAcceptanceIdentifier
+    	if (bVeryVerbose)
+    		System.out.println(response.message);
+    	if (response.statusCode == 200) {
+    		SaxExtractor saxExtractor= new SaxExtractor();
+    		saxExtractor.addKeyToExtract(responseARv02);
+    		saxExtractor.addKeyToExtract(responseAcceptv02);
+    		saxExtractor.addKeyToExtract(ta_identifier);
+    		saxExtractor.addKeyToExtract(tr_identifier);
+    		saxExtractor.addKeyToExtract(dateTransfert);
+    		saxExtractor.demarrerExtraction(response.message);
+    		response.message = saxExtractor.getExtractedValue(ta_identifier);
+    		if (response.message == null) // Version SEDA 1.0
+    			response.message = saxExtractor.getExtractedValue(tr_identifier);
+    		response.dateTransfert = saxExtractor.getExtractedValue(dateTransfert);
+    		response.ArchiveTransferReply = saxExtractor.getExtractedValue(responseARv02);
+    		response.ArchiveTransferAcceptance = saxExtractor.getExtractedValue(responseAcceptv02);
+    	}
+    	return response;
+    }
+
+
 	/**
 	 * Appel un web service à l'aide de la méthode GET
 	 * 
@@ -267,7 +324,7 @@ public class AsalaeConnector {
 
 		HttpGet httpGet = new HttpGet(url);
 		String auth = param.getUsername() + ":" + param.getPassword();
-		String encoding = Base64.encodeBase64URLSafeString(auth.getBytes());
+		String encoding = Base64.getUrlEncoder().encodeToString(auth.getBytes());
 		httpGet.setHeader("Authorization", "Basic " + encoding);
 
 		httpGet.addHeader("Accept", responseFormat);
@@ -334,7 +391,7 @@ public class AsalaeConnector {
                 .build();
 		HttpPost httpPost = new HttpPost(param.getUrlAsalae() + "/restservices/sedaMessages");
 		String auth = param.getUsername() + ":" + param.getPassword();
-		String encoding = Base64.encodeBase64URLSafeString(auth.getBytes());
+		String encoding = Base64.getUrlEncoder().encodeToString(auth.getBytes());
 		httpPost.setHeader("Authorization", "Basic " + encoding);
 
 		httpPost.addHeader("Accept", "application/json");

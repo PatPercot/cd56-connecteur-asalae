@@ -13,6 +13,8 @@
 5) Fonction "tester-serveur" du connecteur
 6) Fonction "connecter-serveur" du connecteur
 7) Fonction "transferer-archive" du connecteur
+7) Fonction "get-ack" du connecteur
+7) Fonction "get-atr" du connecteur
 ---------------------------------------------
 
 
@@ -32,6 +34,8 @@ accord de versement.
 Le transfert des archives se fait à l'aide la commande transferer-archive
 
 Deux commandes permettent de tester la connexion.
+Une commande permet de transférer l'archive
+Deux commandes peremttent de récupérer les CAK et ATR après tranfert de l'archive
 
 ---------------------------------------------
 ----------------- 2) Installation du connecteur
@@ -124,7 +128,7 @@ c:\repInstall> connecteur-asalae.bat -verbose connecter-serveur
 
 
 ---------------------------------------------
------------------ 6) Fonction "transferer-archive" du connecteur
+----------------- 7) Fonction "transferer-archive" du connecteur
 
 Le connecteur permet de transférer dans le SAE une nouvelle archive.
 
@@ -137,5 +141,49 @@ c:\repInstall> connecteur-asalae.bat transferer-archive \
 Un mode bavard peut être demandé :
 c:\repInstall> connecteur-asalae.bat -verbose transferer-archive \
    "nom-fichier.xml"  "nom-fichier.zip"
+
+
+---------------------------------------------
+----------------- 8) Fonction "get-ack" du connecteur
+
+Le connecteur permet de récupérer l'accusé de réception (Acknowledgement) d'une archive
+qui a été transférée dans le SAE.
+Il faut connaître :
+	- l'identifiant du transfert (TransferIdentifier) du bordereau de transfert
+	- l'identifiant du service versant (TransferringAgency) du bordereau de transfert
+
+Cette commande affiche :
+	- "OK: " suivi de l'accusé de réception fourni par le SAE
+	- "ERROR: (get-ack) " suivi d'un message
+
+Exécution :
+c:\repInstall> connecteur-asalae.bat get-ack \
+   "TRANSFER_ID"  "TRANSFERRING-AGENCY_ID"
+
+Un mode bavard peut être demandé :
+c:\repInstall> connecteur-asalae.bat -verbose get-ack \
+   "TRANSFER_ID"  "TRANSFERRING-AGENCY_ID"
+
+
+---------------------------------------------
+----------------- 9) Fonction "get-atr" du connecteur
+
+Le connecteur permet de récupérer l'accusé de transfert (ArchiveTransferReply) d'une archive
+qui a été transférée dans le SAE.
+Il faut connaître :
+	- l'identifiant du transfert (TransferIdentifier) du bordereau de transfert
+	- l'identifiant du service versant (TransferringAgency) du bordereau de transfert
+
+Cette commande affiche :
+	- "OK: " suivi de l'ATR fourni par le SAE
+	- "ERROR: (get-atr) " suivi d'un message
+
+Exécution :
+c:\repInstall> connecteur-asalae.bat get-atr \
+   "TRANSFER_ID"  "TRANSFERRING-AGENCY_ID"
+
+Un mode bavard peut être demandé :
+c:\repInstall> connecteur-asalae.bat -verbose get-atr \
+   "TRANSFER_ID"  "TRANSFERRING-AGENCY_ID"
 
 

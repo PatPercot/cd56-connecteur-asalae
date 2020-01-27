@@ -12,6 +12,23 @@ public class ConfigurationServeur {
 	private String password = null;
 	private String UrlAsalae = null;
 	
+	// Tous les délais et durées sont en minutes
+	
+	// Délai avant émission d'une alerte pour les archives récemment transférées
+	// Indication de risque de bordereau non conforme 
+	private String delaiAlerteSae = null;
+	// Temps durant lequel l'alerte pourra être émise (0 pour désactiver)
+	// T1 : Transfert de l'archive ..... T2 = T1 +  delaiAlerteSae ..... T3 = T1 +  delaiAlerteSae + dureeEmissionAlerte
+	//                                   Début alerte                    Fin alerte
+	private String dureeEmissionAlerte = null;
+	// Délai avant émission d'une erreur
+	// Indication de risque de traitement manuel attendu 
+	private String delaiErreurSae = null;
+	// Temps durant lequel l'erreur pourra être émise (0 pour désactiver)
+	// T1 : Transfert de l'archive ..... T4 = T1 +  delaiErreurSae ..... T5 = T1 +  delaiErreurSae + dureeEmissionErreur
+	//                                   Début erreur                    Fin alerte
+	private String dureeEmissionErreur = null;
+	
 	/**
 	 * Vérifie que la configuration est complète 
 	 * 
@@ -57,6 +74,38 @@ public class ConfigurationServeur {
 	 */
 	public void setUrlAsalae(String urlAsalae) {
 		UrlAsalae = urlAsalae;
+	}
+
+	public String getDureeEmissionErreur() {
+		return dureeEmissionErreur;
+	}
+
+	public void setDureeEmissionErreur(String dureeEmissionErreur) {
+		this.dureeEmissionErreur = dureeEmissionErreur;
+	}
+
+	public String getDelaiErreurSae() {
+		return delaiErreurSae;
+	}
+
+	public void setDelaiErreurSae(String delaiErreurSae) {
+		this.delaiErreurSae = delaiErreurSae;
+	}
+
+	public String getDureeEmissionAlerte() {
+		return dureeEmissionAlerte;
+	}
+
+	public void setDureeEmissionAlerte(String dureeEmissionAlerte) {
+		this.dureeEmissionAlerte = dureeEmissionAlerte;
+	}
+
+	public String getDelaiAlerteSae() {
+		return delaiAlerteSae;
+	}
+
+	public void setDelaiAlerteSae(String delaiAlerteSae) {
+		this.delaiAlerteSae = delaiAlerteSae;
 	}
 
 }
