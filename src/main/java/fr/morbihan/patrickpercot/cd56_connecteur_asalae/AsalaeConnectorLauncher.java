@@ -22,8 +22,8 @@ public class AsalaeConnectorLauncher {
 	protected String commandeTester = "tester-serveur";
 	protected String commandeConnexion = "connecter-serveur";
 	protected String commandeTransfert = "transferer-archive";
-	protected String commandeGetACK = "get-ack";
-	protected String commandeGetATR = "get-atr";
+	protected String commandeGetAcknowledge = "get-acknowledge";
+	protected String commandeGetAcceptance = "get-acceptance";
 	
 
 
@@ -34,10 +34,11 @@ public class AsalaeConnectorLauncher {
 	
 	protected String[] analyserOptions(String[] args) {
 		if (args.length > 1 && ("--verbose".equals(args[0]) || "-v".equals(args[0]) 
-				|| ("--veryverbose".equals(args[0]) || "-vv".equals(args[0])) )) {
-			if ("--veryverbose".equals(args[0]) || "-vv".equals(args[0])) 
+				|| "--veryverbose".equals(args[0]) || "-vv".equals(args[0])) ) {
+			if ("--veryverbose".equals(args[0]) || "-vv".equals(args[0])) {
 				bVeryVerbose = true;
-			else
+				bVerbose = true;
+			} else
 				bVerbose = true;
 			int len = args.length -1;
 			String[] newArgs = new String[len];
@@ -86,16 +87,14 @@ public class AsalaeConnectorLauncher {
         	param.selectionServeur(serveur);
             
             http = new AsalaeConnector(param);
-            if (bVerbose)
-            	http.setVerbose(bVerbose);
-            if (bVeryVerbose)
-            	http.setVeryVerbose(bVeryVerbose);
+        	http.setVerbose(bVerbose);
+        	http.setVeryVerbose(bVeryVerbose);
             
 			if (	(args.length == 1 && commandeTester.equals(args[0].toLowerCase()))
 				 || (args.length == 1 && commandeConnexion.equals(args[0].toLowerCase()))
 				 || (args.length == 3 && commandeTransfert.equals(args[0].toLowerCase()))
-				 || (args.length == 3 && commandeGetACK.equals(args[0].toLowerCase()))
-				 || (args.length == 3 && commandeGetATR.equals(args[0].toLowerCase()))
+				 || (args.length == 3 && commandeGetAcknowledge.equals(args[0].toLowerCase()))
+				 || (args.length == 3 && commandeGetAcceptance.equals(args[0].toLowerCase()))
 				 )  {
 				bHasRun = true;
 
@@ -108,11 +107,11 @@ public class AsalaeConnectorLauncher {
 				if (commandeTransfert.equals(args[0].toLowerCase())) 
 					transfert(args[1], args[2]);
 
-				if (commandeGetACK.equals(args[0].toLowerCase())) 
-					getack(args[1], args[2]);
+				if (commandeGetAcknowledge.equals(args[0].toLowerCase())) 
+					getacknowledge(args[1], args[2]);
 
-				if (commandeGetATR.equals(args[0].toLowerCase())) 
-					getatr(args[1], args[2]);
+				if (commandeGetAcceptance.equals(args[0].toLowerCase())) 
+					getacceptance(args[1], args[2]);
 			}
         }
 				
@@ -123,6 +122,8 @@ public class AsalaeConnectorLauncher {
 
 	  public void tester() {
         	AsalaeConnector http = new AsalaeConnector(param);
+        	http.setVerbose(bVerbose);
+        	http.setVeryVerbose(bVeryVerbose);
 
         	if (bVerbose) {
         		System.out.println("Test de présence du serveur As@lae '" + param.getUrlAsalae() + "'");
@@ -154,6 +155,8 @@ public class AsalaeConnectorLauncher {
 
 	  public void connexion() {
       	AsalaeConnector http = new AsalaeConnector(param);
+    	http.setVerbose(bVerbose);
+    	http.setVeryVerbose(bVeryVerbose);
 
       	if (bVerbose) {
       		System.out.println("Test de connexion à As@lae '" + param.getUrlAsalae() + "'");
@@ -189,6 +192,8 @@ public class AsalaeConnectorLauncher {
 
 		  public void transfert(String bordereau, String zip) {
 	        	AsalaeConnector http = new AsalaeConnector(param);
+	        	http.setVerbose(bVerbose);
+	        	http.setVeryVerbose(bVeryVerbose);
 
 	        	if (bVerbose) {
 		    		System.out.println("Transfert vers '" + param.getUrlAsalae() + "' de '" +
@@ -224,79 +229,85 @@ public class AsalaeConnectorLauncher {
 		  /*
 		   * @param transferIdentifier identifiant du transfert, exemple DEP56_PESV2_WSJAVA_0000000002
 		   */
-		  public void getack(String transferIdentifier, String transferringAgency) {
+		  public void getacknowledge(String transferIdentifier, String transferringAgency) {
 	        	AsalaeConnector http = new AsalaeConnector(param);
+	        	http.setVerbose(bVerbose);
+	        	http.setVeryVerbose(bVeryVerbose);
 
 	        	if (bVerbose) {
-	        		System.out.println("Récupération d'un ACK As@lae '" + param.getUrlAsalae() + "' pour '" 
+	        		System.out.println("Récupération d'un acknowledge As@lae '" + param.getUrlAsalae() + "' pour '" 
 	        				+ transferIdentifier + "' transféré par '" + transferringAgency + "'");
 	        	}
 	    		try {
-	    			AsalaeReturn response = http.getACK(transferIdentifier, transferringAgency);
+	    			AsalaeReturn response = http.getAcknowledge(transferIdentifier, transferringAgency);
 	    			
 	    			if (bVeryVerbose) {
 		    			System.out.println("Message = " + response.getMessage());
 		    			System.out.println("Code = " + response.getStatusCode());
 	    			}
 	    			if (response.statusCode == 200) {
-		    			String accuseReception = null;
-		    			// version = récupération accuseReception dans message SEDA XML 
+		    			String accuseReception = response.Acknowledgement;
 						if (bVerbose)
-							System.out.println("La version d'As@laé est la version '" + accuseReception + "'");
+							System.out.println("L'accusé de réception du transfert vaut '" + accuseReception + "'");
 						else
 							System.out.println("OK: '" + accuseReception + "'");
 	    			} else {
   					if (bVerbose)
-  						System.out.println("Erreur lors de la demande de version : '" + response.message + "'");
+  						System.out.println("Erreur lors de la demande d'accusé de réception du transfert : '" + response.message + "'");
   					else
-  						System.out.println("ERROR: (get-ack) '" + response.message + "'");
+  						System.out.println("ERROR: (get-acknowledge) '" + response.message + "'");
 	    			}
 
 	    		}
   			catch (Exception e) {
-  				System.err.println("ERROR: (connecter-serveur) une exception de type " + e.getClass() + " s'est produite " + e.getMessage());
+  				System.err.println("ERROR: (get-acknowledge) une exception de type " + e.getClass() + " s'est produite " + e.getMessage());
   			}
 		        
 		  }
 
-		  public void getatr(String transferIdentifier, String transferringAgency) {
+		  public void getacceptance(String transferIdentifier, String transferringAgency) {
 	        	AsalaeConnector http = new AsalaeConnector(param);
+	        	http.setVerbose(bVerbose);
+	        	http.setVeryVerbose(bVeryVerbose);
 
 	        	if (bVerbose) {
 	        		System.out.println("Récupération d'un ATR As@lae '" + param.getUrlAsalae() + "' pour '" 
 	        				+ transferIdentifier + "' transféré par '" + transferringAgency + "'");
 	        	}
 	    		try {
-	    			AsalaeReturn response = http.getATR(transferIdentifier, transferringAgency);
+	    			AsalaeReturn response = http.getAcceptance(transferIdentifier, transferringAgency);
 	    			
 	    			if (bVeryVerbose) {
 		    			System.out.println("Message = " + response.getMessage());
 		    			System.out.println("Code = " + response.getStatusCode());
 	    			}
 	    			if (response.statusCode == 200) {
-		    			String archiveTransferReply = null;
-		    			// version = récupération archiveTransferReply dans message SEDA XML 
+		    			String archiveTransferReply = response.ArchiveTransferAcceptance;
 						if (bVerbose)
-							System.out.println("La version d'As@laé est la version '" + archiveTransferReply + "'");
+							System.out.println("L'identifiant de l'accusé d'acceptation vaut '" + archiveTransferReply + "'");
 						else
 							System.out.println("OK: '" + archiveTransferReply + "'");
 	    			} else {
   					if (bVerbose)
-  						System.out.println("Erreur lors de la demande de version : '" + response.message + "'");
+  						System.out.println("Erreur lors de la demande d'accusé d'acceptation d'archive : '" + response.message + "'");
   					else
-  						System.out.println("ERROR: (get-atr) '" + response.message + "'");
+  						System.out.println("ERROR: (get-acceptance) '" + response.message + "'");
 	    			}
 
 	    		}
   			catch (Exception e) {
-  				System.err.println("ERROR: (connecter-serveur) une exception de type " + e.getClass() + " s'est produite " + e.getMessage());
+  				System.err.println("ERROR: (get-acceptance) une exception de type " + e.getClass() + " s'est produite " + e.getMessage());
   			}
 		        
 		  }
 
 		  protected void usage() {
 			System.out.println("Le connecteur As@laé du département du Morbihan peut être utilisé pour transmettre");
-			System.out.println("une archive à un SAE As@laé.");
+			System.out.println("une archive à un SAE As@laé, obtenir son ACK et son ATR");
+			System.out.println("");
+			System.out.println("Options :");
+			System.out.println("Identifier le serveur avec --serveur ID_SERVEUR (voir param.config)");
+			System.out.println("Obtenir plus d'informations avec --verbose ou --veryverbose");
 			System.out.println("");
 			System.out.println("Référez-vous à la documentatioon pour paramétrer le logiciel");
 			System.out.println("");
@@ -321,18 +332,20 @@ public class AsalaeConnectorLauncher {
 			System.out.println("\tLe programme indique si le transfert s'est déroulé correctement");
 			System.out.println("\n");
 						
-			System.out.println("Usage de la commande de récupération d'accusé de réception : 1 (un) paramètre est nécessaire");
-			System.out.println("\t\t-nom de la commande : get-ack");
-			System.out.println("\t\t-identifidant du transfert (bordereau SEDA) : \"ID_ALPHANUM_TRANSFERT\"");
+			System.out.println("Usage de la commande de récupération de l'identifiant d'accusé de transmission : 2 (deux) paramètres sont nécessaires");
+			System.out.println("\t\t-nom de la commande : get-acknowledge");
+			System.out.println("\t\t-identifiant du transfert (bordereau SEDA) : \"ID_ALPHANUM_TRANSFERT\"");
+			System.out.println("\t\t-identifiant du service versant (bordereau SEDA) : \"ID_ALPHANUM_ORIGINATING_AGENCY\"");
 			System.out.println("");
-			System.out.println("\tLe programme retourne les informations renvoyées par le SAE");
+			System.out.println("\tLe programme retourne l'ACK dur transfert ou un message d'erreur");
 			System.out.println("\n");
 						
-			System.out.println("Usage de la commande de récupération de l'ATR (ArchiveTransferReply) : 1 (un) paramètre est nécessaire");
-			System.out.println("\t\t-nom de la commande : get-atr");
-			System.out.println("\t\t-identifidant du transfert (bordereau SEDA) : \"ID_ALPHANUM_TRANSFERT\"");
+			System.out.println("Usage de la commande de récupération de l'identifiant d'azcceptation : 2 (deux) paramètres sont nécessaires");
+			System.out.println("\t\t-nom de la commande : get-acceptance");
+			System.out.println("\t\t-identifiant du transfert (bordereau SEDA) : \"ID_ALPHANUM_TRANSFERT\"");
+			System.out.println("\t\t-identifiant du service versant (bordereau SEDA) : \"ID_ALPHANUM_ORIGINATING_AGENCY\"");
 			System.out.println("");
-			System.out.println("\tLe programme retourne les informations renvoyées par le SAE");
+			System.out.println("\tLe programme retourne l'identifant d'acceptation de l'archive ou un message d'erreur");
 			System.out.println("\n");
 						
 		}

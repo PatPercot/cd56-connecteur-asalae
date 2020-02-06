@@ -56,17 +56,17 @@ extends TestCase
 		test.addTest(new CD56ConnecteurAsalaeTest("testConnecteurParDefaut"));
 		test.addTest(new CD56ConnecteurAsalaeTest("testConnecteurSaeInt"));
 
-		test.addTest(new CD56ConnecteurAsalaeTest("testGetAckOk"));
-		test.addTest(new CD56ConnecteurAsalaeTest("testGetATAOk"));
+		test.addTest(new CD56ConnecteurAsalaeTest("testGetAcknowledgeOk"));
+		test.addTest(new CD56ConnecteurAsalaeTest("testGetAcceptanceOk"));
 
-		test.addTest(new CD56ConnecteurAsalaeTest("testGetAckRejete"));
-		test.addTest(new CD56ConnecteurAsalaeTest("testGetATARejete"));
+		test.addTest(new CD56ConnecteurAsalaeTest("testGetAcknowledgeRejete"));
+		test.addTest(new CD56ConnecteurAsalaeTest("testGetAcceptanceRejete"));
 
-		test.addTest(new CD56ConnecteurAsalaeTest("testGetAckNotOk"));
-		test.addTest(new CD56ConnecteurAsalaeTest("testGetATANotOk"));
+		test.addTest(new CD56ConnecteurAsalaeTest("testGetAcknowledgeNotOk"));
+		test.addTest(new CD56ConnecteurAsalaeTest("testGetAcceptanceNotOk"));
 
-		test.addTest(new CD56ConnecteurAsalaeTest("testGetACKEnAttente"));
-		test.addTest(new CD56ConnecteurAsalaeTest("testGetATAEnAttente"));
+		test.addTest(new CD56ConnecteurAsalaeTest("testGetAcknowledgeEnAttente"));
+		test.addTest(new CD56ConnecteurAsalaeTest("testGetAcceptanceEnAttente"));
 
 		/*
         test.addTest(new CD56ConnecteurAsalaeTest("testPOSTAsalae"));
@@ -385,7 +385,7 @@ extends TestCase
 	 * Test pour vérification du bon fonctionnement de getAck
 	 * 
 	 */
-	public void testGetAckOk() {
+	public void testGetAcknowledgeOk() {
 		ConfigFile param = new ConfigFile();
 		if (param.loadFile("param.config.test")) {
 			AsalaeConnector http = new AsalaeConnector(param);
@@ -393,13 +393,13 @@ extends TestCase
 
 			System.out.println("\n\nTesting Appel testGetAck");
 			try {
-				// AsalaeReturn response = http.getACK("DEP56_PESV2_WSJAVA_0000000002", "225600014_122");
-				// AsalaeReturn response = http.getACK("MATRICES_CADASTRALES_60679b01e66ed25c03713c4a43056174fc6c25da1538c28514840f88d9fafbc3@2017-03-01T17:31:11.0000048Z", "FRCOL_840933");
-				AsalaeReturn response = http.getACK("CD56_PES_MANUEL6c07694fe0d6f1c091582d95d7d6858df48d25e880ac96eaa7f4b7968da93c9b@2017-04-10T11:48:37.0000568Z", "225600014_122");
+				// AsalaeReturn response = http.getAcknowledge("DEP56_PESV2_WSJAVA_0000000002", "225600014_122");
+				// AsalaeReturn response = http.getAcknowledge("MATRICES_CADASTRALES_60679b01e66ed25c03713c4a43056174fc6c25da1538c28514840f88d9fafbc3@2017-03-01T17:31:11.0000048Z", "FRCOL_840933");
+				AsalaeReturn response = http.getAcknowledge("CD56_PES_MANUEL6c07694fe0d6f1c091582d95d7d6858df48d25e880ac96eaa7f4b7968da93c9b@2017-04-10T11:48:37.0000568Z", "225600014_122");
 				
 				response.trace();
 				assert(response.getStatusCode() == 200);
-				assert(response.getMessage().equals("ATR_161"));
+				assert(response.getAcknowledgement().equals("ATR_161"));
 
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
@@ -418,20 +418,20 @@ extends TestCase
 	 * Test pour vérification du bon fonctionnement de getATR
 	 * 
 	 */
-	public void testGetATAOk() {
+	public void testGetAcceptanceOk() {
 		ConfigFile param = new ConfigFile();
 		if (param.loadFile("param.config.test")) {
 			AsalaeConnector http = new AsalaeConnector(param);
 			http.setVeryVerbose(true);
 
-			System.out.println("\n\nTesting Appel testGetATA OK");
+			System.out.println("\n\nTesting Appel testGetAcceptance OK");
 			try {
-				// AsalaeReturn response = http.getATA("DEP56_PESV2_WSJAVA_0000000002", "225600014_122");
-				// AsalaeReturn response = http.getATA("MATRICES_CADASTRALES_60679b01e66ed25c03713c4a43056174fc6c25da1538c28514840f88d9fafbc3@2017-03-01T17:31:11.0000048Z", "FRCOL_840933");
-				// AsalaeReturn response = http.getATA("CD56_PES_MANUEL6c07694fe0d6f1c091582d95d7d6858df48d25e880ac96eaa7f4b7968da93c9b@2017-04-10T11:48:37.0000568Z", "225600014_122");
-				// AsalaeReturn response = http.getATA("CD56_SONORE_9e7cb501574f5f55f18c045471cb513764983581df41a0356e76a7201f408bb5@2017-12-01T15:49:53.0000176Z", "FRCOL_632");
-				// AsalaeReturn response = http.getATA("MATRICES_CADASTRALES_c2caf023c5aab2db89ecf0cdd287077e6d080708bbb266b351b9e9450b9c66aa@2018-0926-18T210:50:51.0000791Z", "FRCOL_1141681");
-				AsalaeReturn response = http.getATR("INT_DEPT56_DRH-SFT439dd30feb232d19b8eab48e4b99a00dd66057a710009bb76711c411d7ee13e3@2019-11-15T12:53:22.0000194Z", "FRCOL_1786450");
+				// AsalaeReturn response = http.getATR("DEP56_PESV2_WSJAVA_0000000002", "225600014_122");
+				// AsalaeReturn response = http.getATR("MATRICES_CADASTRALES_60679b01e66ed25c03713c4a43056174fc6c25da1538c28514840f88d9fafbc3@2017-03-01T17:31:11.0000048Z", "FRCOL_840933");
+				// AsalaeReturn response = http.getATR("CD56_PES_MANUEL6c07694fe0d6f1c091582d95d7d6858df48d25e880ac96eaa7f4b7968da93c9b@2017-04-10T11:48:37.0000568Z", "225600014_122");
+				// AsalaeReturn response = http.getATR("CD56_SONORE_9e7cb501574f5f55f18c045471cb513764983581df41a0356e76a7201f408bb5@2017-12-01T15:49:53.0000176Z", "FRCOL_632");
+				// AsalaeReturn response = http.getATR("MATRICES_CADASTRALES_c2caf023c5aab2db89ecf0cdd287077e6d080708bbb266b351b9e9450b9c66aa@2018-0926-18T210:50:51.0000791Z", "FRCOL_1141681");
+				AsalaeReturn response = http.getAcceptance("INT_DEPT56_DRH-SFT439dd30feb232d19b8eab48e4b99a00dd66057a710009bb76711c411d7ee13e3@2019-11-15T12:53:22.0000194Z", "FRCOL_1786450");
 
 				response.trace();
 				assert(response.getStatusCode() == 200);
@@ -439,7 +439,7 @@ extends TestCase
 				// assert(response.getMessage().equals("ATA_55"));
 				// assert(response.getMessage().equals("ATA_55"));
 				// assert(response.getMessage().equals("ATA_295"));
-				assert(response.getMessage().equals("ATA_332"));
+				assert(response.getArchiveTransferAcceptance().equals("ATA_332"));
 
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
@@ -461,22 +461,22 @@ extends TestCase
 	 * Test pour vérification du bon fonctionnement de getAck
 	 * 
 	 */
-	public void testGetAckRejete() {
+	public void testGetAcknowledgeRejete() {
 		ConfigFile param = new ConfigFile();
 		if (param.loadFile("param.config.test")) {
 			AsalaeConnector http = new AsalaeConnector(param);
 			http.setVeryVerbose(true);
 
-			System.out.println("\n\nTesting Appel testGetAck REJET");
+			System.out.println("\n\nTesting Appel testGetAcknowledge REJET");
 			try {
-				// AsalaeReturn response = http.getACK("DEP56_PESV2_WSJAVA_0000000002", "225600014_122");
-				// AsalaeReturn response = http.getACK("MATRICES_CADASTRALES_60679b01e66ed25c03713c4a43056174fc6c25da1538c28514840f88d9fafbc3@2017-03-01T17:31:11.0000048Z", "FRCOL_840933");
-				AsalaeReturn response = http.getACK("CD56_PES_MANUEL342e73e2d9118479d88fd54857cb49910f3ff17e08ced0977f5d66a1018a68f6@2017-04-05T18:15:04.0000945Z", "225600014_122");
+				// AsalaeReturn response = http.getAcknowledge("DEP56_PESV2_WSJAVA_0000000002", "225600014_122");
+				// AsalaeReturn response = http.getAcknowledge("MATRICES_CADASTRALES_60679b01e66ed25c03713c4a43056174fc6c25da1538c28514840f88d9fafbc3@2017-03-01T17:31:11.0000048Z", "FRCOL_840933");
+				AsalaeReturn response = http.getAcknowledge("CD56_PES_MANUEL342e73e2d9118479d88fd54857cb49910f3ff17e08ced0977f5d66a1018a68f6@2017-04-05T18:15:04.0000945Z", "225600014_122");
 				
 
 				response.trace();
 				assert(response.getStatusCode() == 200);
-				assert(response.getMessage().equals("ATR_151"));
+				assert(response.getAcknowledgement().equals("ATR_151"));
 
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
@@ -495,22 +495,22 @@ extends TestCase
 	 * Test pour vérification du bon fonctionnement de getATR
 	 * 
 	 */
-	public void testGetATARejete() {
+	public void testGetAcceptanceRejete() {
 		ConfigFile param = new ConfigFile();
 		if (param.loadFile("param.config.test")) {
 			AsalaeConnector http = new AsalaeConnector(param);
 			http.setVeryVerbose(true);
 
-			System.out.println("\n\nTesting Appel testGetATA REJET");
+			System.out.println("\n\nTesting Appel testGetAcceptance REJET");
 			try {
-				// AsalaeReturn response = http.getATA("DEP56_PESV2_WSJAVA_0000000002", "225600014_122");
-				// AsalaeReturn response = http.getATA("MATRICES_CADASTRALES_60679b01e66ed25c03713c4a43056174fc6c25da1538c28514840f88d9fafbc3@2017-03-01T17:31:11.0000048Z", "FRCOL_840933");
-				AsalaeReturn response = http.getATR("CD56_PES_MANUEL342e73e2d9118479d88fd54857cb49910f3ff17e08ced0977f5d66a1018a68f6@2017-04-05T18:15:04.0000945Z", "225600014_122");
+				// AsalaeReturn response = http.getAcceptance("DEP56_PESV2_WSJAVA_0000000002", "225600014_122");
+				// AsalaeReturn response = http.getAcceptance("MATRICES_CADASTRALES_60679b01e66ed25c03713c4a43056174fc6c25da1538c28514840f88d9fafbc3@2017-03-01T17:31:11.0000048Z", "FRCOL_840933");
+				AsalaeReturn response = http.getAcceptance("CD56_PES_MANUEL342e73e2d9118479d88fd54857cb49910f3ff17e08ced0977f5d66a1018a68f6@2017-04-05T18:15:04.0000945Z", "225600014_122");
 
 				response.trace();
 				assert(response.getStatusCode() == 200);
 				// assert(response.getMessage().equals("ATA_55"));
-				assert(response.getMessage().equals("ATR_162"));
+				assert(response.getArchiveTransferAcceptance().equals("ATR_162"));
 
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
@@ -529,17 +529,17 @@ extends TestCase
 	 * Test pour vérification du bon fonctionnement de getAck
 	 * 
 	 */
-	public void testGetAckNotOk() {
+	public void testGetAcknowledgeNotOk() {
 		ConfigFile param = new ConfigFile();
 		if (param.loadFile("param.config.test")) {
 			AsalaeConnector http = new AsalaeConnector(param);
 			http.setVeryVerbose(false);
 
-			System.out.println("\n\nTesting Appel testGetAck NOT OK");
+			System.out.println("\n\nTesting Appel testGetAcknowledge NOT OK");
 			try {
-				// AsalaeReturn response = http.getACK("DEP56_PESV2_WSJAVA_0000000002", "225600014_122");
-				// AsalaeReturn response = http.getACK("MATRICES_CADASTRALES_60679b01e66ed25c03713c4a43056174fc6c25da1538c28514840f88d9fafbc3@2017-03-01T17:31:11.0000048Z", "FRCOL_840933");
-				AsalaeReturn response = http.getACK("XXXCD56_PES_MANUEL68a5755aecfd02a33c88d6ff26e5ae48598ff3724e3fea3bc741c2d6c7cf6d07@2017-04-06T17:52:52.0000977Z", "225600014_122");
+				// AsalaeReturn response = http.getAcknowledge("DEP56_PESV2_WSJAVA_0000000002", "225600014_122");
+				// AsalaeReturn response = http.getAcknowledge("MATRICES_CADASTRALES_60679b01e66ed25c03713c4a43056174fc6c25da1538c28514840f88d9fafbc3@2017-03-01T17:31:11.0000048Z", "FRCOL_840933");
+				AsalaeReturn response = http.getAcknowledge("XXXCD56_PES_MANUEL68a5755aecfd02a33c88d6ff26e5ae48598ff3724e3fea3bc741c2d6c7cf6d07@2017-04-06T17:52:52.0000977Z", "225600014_122");
 				
 
 				response.trace();
@@ -563,17 +563,17 @@ extends TestCase
 	 * Test pour vérification du bon fonctionnement de getATR
 	 * 
 	 */
-	public void testGetATANotOk() {
+	public void testGetAcceptanceNotOk() {
 		ConfigFile param = new ConfigFile();
 		if (param.loadFile("param.config.test")) {
 			AsalaeConnector http = new AsalaeConnector(param);
 			http.setVeryVerbose(false);
 
-			System.out.println("\n\nTesting Appel testGetATA NOT OK");
+			System.out.println("\n\nTesting Appel testGetAcceptance NOT OK");
 			try {
-				// AsalaeReturn response = http.getATA("DEP56_PESV2_WSJAVA_0000000002", "225600014_122");
-				// AsalaeReturn response = http.getATA("MATRICES_CADASTRALES_60679b01e66ed25c03713c4a43056174fc6c25da1538c28514840f88d9fafbc3@2017-03-01T17:31:11.0000048Z", "FRCOL_840933");
-				AsalaeReturn response = http.getATR("CD56_PES_MANUEL68a5755aecfd02a33c88d6ff26e5ae48598ff3724e3fea3bc741c2d6c7cf6d07@2017-04-06T17:52:52.0000977Z", "225600014_122");
+				// AsalaeReturn response = http.getAcceptance("DEP56_PESV2_WSJAVA_0000000002", "225600014_122");
+				// AsalaeReturn response = http.getAcceptance("MATRICES_CADASTRALES_60679b01e66ed25c03713c4a43056174fc6c25da1538c28514840f88d9fafbc3@2017-03-01T17:31:11.0000048Z", "FRCOL_840933");
+				AsalaeReturn response = http.getAcceptance("CD56_PES_MANUEL68a5755aecfd02a33c88d6ff26e5ae48598ff3724e3fea3bc741c2d6c7cf6d07@2017-04-06T17:52:52.0000977Z", "225600014_122");
 
 				response.trace();
 				assert(response.getStatusCode() == 500);
@@ -597,18 +597,18 @@ extends TestCase
 	 * Test pour vérification du bon fonctionnement de getACK
 	 * 
 	 */
-	public void testGetACKEnAttente() {
+	public void testGetAcknowledgeEnAttente() {
 		ConfigFile param = new ConfigFile();
 		if (param.loadFile("param.config.test")) {
 			AsalaeConnector http = new AsalaeConnector(param);
 			http.setVeryVerbose(false);
 
-			System.out.println("\n\nTesting Appel testGetACK en attente");
+			System.out.println("\n\nTesting Appel testGetAcknowledge en attente");
 			try {
-				// AsalaeReturn response = http.getATR("DEP56_PESV2_WSJAVA_0000000002", "225600014_122");
-				// AsalaeReturn response = http.getATR("MATRICES_CADASTRALES_60679b01e66ed25c03713c4a43056174fc6c25da1538c28514840f88d9fafbc3@2017-03-01T17:31:11.0000048Z", "FRCOL_840933");
-				// AsalaeReturn response = http.getACK("CD56_PES_MANUELe2f3c4171a69998925f93fce0d50a2de8a40711ab68d2e77668519dd82c42167@2017-04-05T17:09:16.0000688Z", "225600014_122");
-				AsalaeReturn response = http.getACK("CD56_SONORE_9e7cb501574f5f55f18c045471cb513764983581df41a0356e76a7201f408bb5@2020-01-13T10:00:03.0000506Z", "FRCOL_632");
+				// AsalaeReturn response = http.getAcknowledge("DEP56_PESV2_WSJAVA_0000000002", "225600014_122");
+				// AsalaeReturn response = http.getAcknowledge("MATRICES_CADASTRALES_60679b01e66ed25c03713c4a43056174fc6c25da1538c28514840f88d9fafbc3@2017-03-01T17:31:11.0000048Z", "FRCOL_840933");
+				// AsalaeReturn response = http.getAcknowledge("CD56_PES_MANUELe2f3c4171a69998925f93fce0d50a2de8a40711ab68d2e77668519dd82c42167@2017-04-05T17:09:16.0000688Z", "225600014_122");
+				AsalaeReturn response = http.getAcknowledge("CD56_SONORE_9e7cb501574f5f55f18c045471cb513764983581df41a0356e76a7201f408bb5@2020-01-13T10:00:03.0000506Z", "FRCOL_632");
 
 				response.trace();
 				assert(response.getStatusCode() == 200);
@@ -628,20 +628,20 @@ extends TestCase
 	}
 
 	/*
-	 * Test pour vérification du bon fonctionnement de getATA
+	 * Test pour vérification du bon fonctionnement de getATR
 	 * 
 	 */
-	public void testGetATAEnAttente() {
+	public void testGetAcceptanceEnAttente() {
 		ConfigFile param = new ConfigFile();
 		if (param.loadFile("param.config.test")) {
 			AsalaeConnector http = new AsalaeConnector(param);
 			http.setVeryVerbose(false);
 
-			System.out.println("\n\nTesting Appel testGetATA en attente");
+			System.out.println("\n\nTesting Appel testGetAccpetance en attente");
 			try {
-				// AsalaeReturn response = http.getATA("DEP56_PESV2_WSJAVA_0000000002", "225600014_122");
-				// AsalaeReturn response = http.getATA("MATRICES_CADASTRALES_60679b01e66ed25c03713c4a43056174fc6c25da1538c28514840f88d9fafbc3@2017-03-01T17:31:11.0000048Z", "FRCOL_840933");
-				AsalaeReturn response = http.getATR("CD56_PES_MANUELe2f3c4171a69998925f93fce0d50a2de8a40711ab68d2e77668519dd82c42167@2017-04-05T17:09:16.0000688Z", "225600014_122");
+				// AsalaeReturn response = http.getAcceptance("DEP56_PESV2_WSJAVA_0000000002", "225600014_122");
+				// AsalaeReturn response = http.getAcceptance("MATRICES_CADASTRALES_60679b01e66ed25c03713c4a43056174fc6c25da1538c28514840f88d9fafbc3@2017-03-01T17:31:11.0000048Z", "FRCOL_840933");
+				AsalaeReturn response = http.getAcceptance("CD56_PES_MANUELe2f3c4171a69998925f93fce0d50a2de8a40711ab68d2e77668519dd82c42167@2017-04-05T17:09:16.0000688Z", "225600014_122");
 
 				response.trace();
 				assert(response.getStatusCode() == 500);

@@ -4,7 +4,7 @@
 
   <groupId>fr.morbihan.patrickpercot</groupId>
   <artifactId>cd56-connecteur-asalae</artifactId>
-  <version>1.1.0</version>
+  <version>1.1.1</version>
   <packaging>jar</packaging>
 
   <name>cd56-connecteur-asalae</name>

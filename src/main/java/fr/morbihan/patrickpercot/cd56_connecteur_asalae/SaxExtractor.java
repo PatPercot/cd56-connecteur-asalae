@@ -25,6 +25,8 @@ public class SaxExtractor extends DefaultHandler {
 	Hashtable<String, String> extractedTags;
 	ArrayList<String> keysToExtract;
 	protected String currentKey;
+	protected boolean bVerbose = false;
+	protected boolean bVeryVerbose = false;
 	
 	/**
 	 * @return the valueOfKey
@@ -40,9 +42,20 @@ public class SaxExtractor extends DefaultHandler {
 		this.keysToExtract = new ArrayList<String>();
 	}
 	
+	public SaxExtractor(boolean bVerbose, boolean bVeryVerbose) {
+		currentKey = "";
+		this.extractedTags = new Hashtable<String, String>();
+		this.keysToExtract = new ArrayList<String>();
+		
+		this.bVerbose= bVerbose;
+		this.bVeryVerbose = bVeryVerbose;
+	}
+	
 	public void addKeyToExtract(String keyToExtract) {
 		currentKey = "";
 		this.keysToExtract.add(keyToExtract);
+		if (bVeryVerbose)
+			System.out.println("SAX: tracking key '" + keyToExtract + "'");
 	}
 	
 	public void demarrerExtraction(String xmlMessage) {
@@ -93,6 +106,8 @@ public class SaxExtractor extends DefaultHandler {
 				valueOfKey = old + valueOfKey;
 			}
 			extractedTags.put(currentKey, valueOfKey);
+			if (bVeryVerbose)
+				System.out.println("SAX: '" + currentKey + "' vaut '" + valueOfKey + "'");
 		}
 	}		
 
