@@ -47,12 +47,12 @@ public class AsalaeConnector {
 	 *	ArchiveTransferReply : la réponse du SAE pour un transfert en attente est HTTP 500
 	 *
 	 */
-	final String responseARv02 = "ArchiveTransferReply";
-	final String responseAcceptv02 = "ArchiveTransferAcceptance";
-	final String tr_identifier = "TransferReplyIdentifier";
+	final String ArchiveTransferAcceptance = "ArchiveTransferAcceptance";
+	final String TransferReplyIdentifier = "TransferReplyIdentifier";
+	final String Comment = "Comment";
 	final String dateTransfert = "Date";
-	final String request = "ArchiveTransferReply";
-	final String ta_identifier = "TransferAcceptanceIdentifier";
+	final String ArchiveTransferReply = "ArchiveTransferReply";
+	final String TransferAcceptanceIdentifier = "TransferAcceptanceIdentifier";
 
 	private ConfigFile param;
 
@@ -121,7 +121,8 @@ public class AsalaeConnector {
 	 */
 	public void setVeryVerbose(boolean bVeryVerbose) {
 		this.bVeryVerbose = bVeryVerbose;
-		this.bVerbose = bVeryVerbose;
+		if (bVeryVerbose == true)
+			this.bVerbose = bVeryVerbose;
 	}
 
     public AsalaeReturn TestPingAsalae() {
@@ -133,7 +134,7 @@ public class AsalaeConnector {
         return callGetMethod("/restservices/versions");
     }
 
-    public AsalaeReturn getACK(String transferIdentifier, String tranferringAgency) {
+    public AsalaeReturn getAcknowledge(String transferIdentifier, String tranferringAgency) {
     	HashMap<String, String> namedParameters = new  HashMap<String, String>();
     	
     	namedParameters.putIfAbsent("sequence", "ArchiveTransfer");
@@ -146,21 +147,23 @@ public class AsalaeConnector {
     	if (bVeryVerbose)
     		System.out.println(response.message);
     	if (response.statusCode == 200) {
-    		SaxExtractor saxExtractor= new SaxExtractor();
-    		saxExtractor.addKeyToExtract(responseARv02);
-    		saxExtractor.addKeyToExtract(responseAcceptv02);
-    		saxExtractor.addKeyToExtract(tr_identifier);
+    		SaxExtractor saxExtractor= new SaxExtractor(bVerbose, bVeryVerbose);
+    		// saxExtractor.addKeyToExtract(ArchiveTransferReply);
+    		// saxExtractor.addKeyToExtract(ArchiveTransferAcceptance);
+    		saxExtractor.addKeyToExtract(TransferReplyIdentifier);
     		saxExtractor.addKeyToExtract(dateTransfert);
+    		saxExtractor.addKeyToExtract(Comment);
     		saxExtractor.demarrerExtraction(response.message);
-    		response.message = saxExtractor.getExtractedValue(tr_identifier);
+    		response.Acknowledgement = saxExtractor.getExtractedValue(TransferReplyIdentifier);
+    		response.message = saxExtractor.getExtractedValue(Comment);
     		response.dateTransfert = saxExtractor.getExtractedValue(dateTransfert);
-    		response.ArchiveTransferReply = saxExtractor.getExtractedValue(responseARv02);
-    		response.ArchiveTransferAcceptance = saxExtractor.getExtractedValue(responseAcceptv02);
+    		// response.ArchiveTransferReply = saxExtractor.getExtractedValue(ArchiveTransferReply);
+    		// response.ArchiveTransferAcceptance = saxExtractor.getExtractedValue(ArchiveTransferAcceptance);
     	}
         return response;
     }
 
-    public AsalaeReturn getATR(String transferIdentifier, String tranferringAgency) {
+    public AsalaeReturn getAcceptance(String transferIdentifier, String tranferringAgency) {
     	HashMap<String, String> namedParameters = new  HashMap<String, String>();
     	
     	namedParameters.putIfAbsent("sequence", "ArchiveTransfer");
@@ -173,28 +176,30 @@ public class AsalaeConnector {
     		System.out.println(response.message);
     	if (response.statusCode == 200) {
     		SaxExtractor saxExtractor= new SaxExtractor();
-    		saxExtractor.addKeyToExtract(responseARv02);
-    		saxExtractor.addKeyToExtract(responseAcceptv02);
-    		saxExtractor.addKeyToExtract(ta_identifier);
-    		saxExtractor.addKeyToExtract(tr_identifier);
+    		// saxExtractor.addKeyToExtract(ArchiveTransferReply);
+    		// saxExtractor.addKeyToExtract(ArchiveTransferAcceptance);
+    		saxExtractor.addKeyToExtract(TransferAcceptanceIdentifier);
+    		saxExtractor.addKeyToExtract(TransferReplyIdentifier);
     		saxExtractor.addKeyToExtract(dateTransfert);
+    		saxExtractor.addKeyToExtract(Comment);
     		saxExtractor.demarrerExtraction(response.message);
-    		response.message = saxExtractor.getExtractedValue(ta_identifier);
-    		if (response.message == null) // Version SEDA 1.0
-    			response.message = saxExtractor.getExtractedValue(tr_identifier);
+    		response.ArchiveTransferAcceptance = saxExtractor.getExtractedValue(TransferAcceptanceIdentifier);
+    		if (response.ArchiveTransferAcceptance == null) // Version SEDA 1.0
+    			response.ArchiveTransferAcceptance = saxExtractor.getExtractedValue(TransferReplyIdentifier);
+    		response.message = saxExtractor.getExtractedValue(Comment);
     		response.dateTransfert = saxExtractor.getExtractedValue(dateTransfert);
-    		response.ArchiveTransferReply = saxExtractor.getExtractedValue(responseARv02);
-    		response.ArchiveTransferAcceptance = saxExtractor.getExtractedValue(responseAcceptv02);
+    		// response.ArchiveTransferReply = saxExtractor.getExtractedValue(ArchiveTransferReply);
+    		// response.ArchiveTransferAcceptance = saxExtractor.getExtractedValue(ArchiveTransferAcceptance);
     	}
     	return response;
     }
 
     public AsalaeReturn getATAandCheckAlert(String transferIdentifier, String tranferringAgency) {
-    	AsalaeReturn response = getATR(transferIdentifier, tranferringAgency);
+    	AsalaeReturn response = getAcceptance(transferIdentifier, tranferringAgency);
     	// On a une archive qui n'a pas encore été traitée
     	// Vérification du temps depuis lequel elle est en attente
     	if (response.statusCode == 500 && response.message.equals("Transfert en cours de traitement")) {
-    		response = getACK(transferIdentifier, tranferringAgency);
+    		response = getAcknowledge(transferIdentifier, tranferringAgency);
     		if (response.getStatusCode() == 200) {
     			Date dateTransfert = Utils.getDateTime(response.getDateTransfert());
     			long elapsedTime = Utils.getDiffToNow(dateTransfert) / 60000L;
@@ -210,11 +215,11 @@ public class AsalaeConnector {
     }
 
     public AsalaeReturn getATAandCheckError(String transferIdentifier, String tranferringAgency) {
-    	AsalaeReturn response = getATR(transferIdentifier, tranferringAgency);
+    	AsalaeReturn response = getAcceptance(transferIdentifier, tranferringAgency);
     	// On a une archive qui n'a pas encore été traitée
     	// Vérification du temps depuis lequel elle est en attente
     	if (response.statusCode == 500 && response.message.equals("Transfert en cours de traitement")) {
-    		response = getACK(transferIdentifier, tranferringAgency);
+    		response = getAcknowledge(transferIdentifier, tranferringAgency);
     		if (response.getStatusCode() == 200) {
     			Date dateTransfert = Utils.getDateTime(response.getDateTransfert());
     			long elapsedTime = Utils.getDiffToNow(dateTransfert);
@@ -234,7 +239,9 @@ public class AsalaeConnector {
     		Code = 500
     		*/
     
-    
+    /*
+     * TODO : getArchiveIdentifiersBy
+     */
     public AsalaeReturn getArchiveIdentifiersBy(boolean duaTerminee, boolean sortConserver, String serviceVersant, String serviceArchive, String serviceProducteur) {
     	HashMap<String, String> namedParameters = new  HashMap<String, String>();
     	
@@ -245,25 +252,27 @@ public class AsalaeConnector {
     	namedParameters.putIfAbsent("ArchivalAgencyIdentification", serviceArchive);
     	namedParameters.putIfAbsent("OriginatingAgencyIdentification", serviceProducteur);
     	
-    	// TODO termeiner le code
+    	// TODO terminer le code
     	AsalaeReturn response = callGetMethod("/restservices/sedaMessages", "application/xml", namedParameters);
     	// Extraction de ArchiveTransferAcceptance/TransferAcceptanceIdentifier
     	if (bVeryVerbose)
     		System.out.println(response.message);
     	if (response.statusCode == 200) {
     		SaxExtractor saxExtractor= new SaxExtractor();
-    		saxExtractor.addKeyToExtract(responseARv02);
-    		saxExtractor.addKeyToExtract(responseAcceptv02);
-    		saxExtractor.addKeyToExtract(ta_identifier);
-    		saxExtractor.addKeyToExtract(tr_identifier);
+    		saxExtractor.addKeyToExtract(ArchiveTransferReply);
+    		saxExtractor.addKeyToExtract(ArchiveTransferAcceptance);
+    		saxExtractor.addKeyToExtract(TransferAcceptanceIdentifier);
+    		saxExtractor.addKeyToExtract(TransferReplyIdentifier);
     		saxExtractor.addKeyToExtract(dateTransfert);
+    		saxExtractor.addKeyToExtract(Comment);
     		saxExtractor.demarrerExtraction(response.message);
-    		response.message = saxExtractor.getExtractedValue(ta_identifier);
+    		response.message = saxExtractor.getExtractedValue(TransferAcceptanceIdentifier);
     		if (response.message == null) // Version SEDA 1.0
-    			response.message = saxExtractor.getExtractedValue(tr_identifier);
+    			response.message = saxExtractor.getExtractedValue(TransferReplyIdentifier);
     		response.dateTransfert = saxExtractor.getExtractedValue(dateTransfert);
-    		response.ArchiveTransferReply = saxExtractor.getExtractedValue(responseARv02);
-    		response.ArchiveTransferAcceptance = saxExtractor.getExtractedValue(responseAcceptv02);
+    		response.ArchiveTransferAcceptance = saxExtractor.getExtractedValue(ArchiveTransferReply);
+    		response.Acknowledgement = saxExtractor.getExtractedValue(ArchiveTransferAcceptance);
+    		response.message = saxExtractor.getExtractedValue(Comment);
     	}
     	return response;
     }
@@ -355,7 +364,7 @@ public class AsalaeConnector {
 			HttpEntity responseEntity = response.getEntity();
 			asalaeRet.setMessage(EntityUtils.toString(responseEntity));
 	        if (bVeryVerbose)
-	        	System.out.println(resp);
+	        	System.out.println(response);
 		} catch (ClientProtocolException e) {
 			System.err.println("ERROR: (callGetMethod) une exception de type ClientProtocolException s'est produite : '" + e.getMessage() + "'" );
 		    return null;
@@ -422,7 +431,7 @@ public class AsalaeConnector {
 			HttpEntity responseEntity = response.getEntity();
 			asalaeRet.setMessage(EntityUtils.toString(responseEntity));
 			if (bVeryVerbose)
-	        	System.out.println(resp);
+	        	System.out.println(response);
 		} catch (ClientProtocolException e) {
 			System.err.println("ERROR: (callPostDocuments) une exception de type ClientProtocolException s'est produite : '" + e.getMessage() + "'" );
 		    return null;

@@ -17,8 +17,8 @@ public class AsalaeReturn {
 	// ERREUR: si délai long est dépassé
 	protected String avertissement;
 	
+	protected String Acknowledgement;
 	protected String ArchiveTransferAcceptance;
-	protected String ArchiveTransferReply;
 	
 	
 	AsalaeReturn() {
@@ -26,20 +26,20 @@ public class AsalaeReturn {
 		message = "";
 		dateTransfert = "";
 		avertissement = "";
-		ArchiveTransferAcceptance = null;
-		ArchiveTransferReply = null;
+		Acknowledgement = "";
+		ArchiveTransferAcceptance = "";
 	}
 	/**
-	 * @return the archiveTransferAcceptance
+	 * @return the Acknowledgement
 	 */
-	public String getArchiveTransferAcceptance() {
-		return ArchiveTransferAcceptance;
+	public String getAcknowledgement() {
+		return Acknowledgement;
 	}
 	/**
 	 * @return the archiveTransferReply
 	 */
-	public String getArchiveTransferReply() {
-		return ArchiveTransferReply;
+	public String getArchiveTransferAcceptance() {
+		return ArchiveTransferAcceptance;
 	}
 	/**
 	 * @return the avertissement
@@ -93,7 +93,7 @@ public class AsalaeReturn {
 		System.out.println("Message = " + getMessage());
 		System.out.println("Code = " + getStatusCode());
 		System.out.println("Date = " + getDateTransfert());
-		System.out.println("ArchiveTransferAcceptance = '" + getArchiveTransferAcceptance() + "'");
-		System.out.println("ArchiveTransferReply = '" + getArchiveTransferReply() + "'");
+		System.out.println("ArchiveTransferAcceptance = '" + getAcknowledgement() + "'");
+		System.out.println("ArchiveTransferReply = '" + getArchiveTransferAcceptance() + "'");
 	}
 }
