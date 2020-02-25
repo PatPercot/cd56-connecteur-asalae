@@ -49,6 +49,7 @@ public class AsalaeConnector {
 	 */
 	final String ArchiveTransferAcceptance = "ArchiveTransferAcceptance";
 	final String TransferReplyIdentifier = "TransferReplyIdentifier";
+	final String AcknowledgementIdentifier = "AcknowledgementIdentifier";
 	final String Comment = "Comment";
 	final String dateTransfert = "Date";
 	final String ArchiveTransferReply = "ArchiveTransferReply";
@@ -151,10 +152,13 @@ public class AsalaeConnector {
     		// saxExtractor.addKeyToExtract(ArchiveTransferReply);
     		// saxExtractor.addKeyToExtract(ArchiveTransferAcceptance);
     		saxExtractor.addKeyToExtract(TransferReplyIdentifier);
+    		saxExtractor.addKeyToExtract(AcknowledgementIdentifier);
     		saxExtractor.addKeyToExtract(dateTransfert);
     		saxExtractor.addKeyToExtract(Comment);
     		saxExtractor.demarrerExtraction(response.message);
     		response.Acknowledgement = saxExtractor.getExtractedValue(TransferReplyIdentifier);
+    		if (response.Acknowledgement == null)
+    			response.Acknowledgement = saxExtractor.getExtractedValue(AcknowledgementIdentifier);
     		response.message = saxExtractor.getExtractedValue(Comment);
     		response.dateTransfert = saxExtractor.getExtractedValue(dateTransfert);
     		// response.ArchiveTransferReply = saxExtractor.getExtractedValue(ArchiveTransferReply);
